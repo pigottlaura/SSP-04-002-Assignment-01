@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var fs = require("fs");
 var storedSecrets;
+var secretsDirectory = "./";
 
 /* GET users listing. */
 
@@ -27,6 +28,7 @@ router.get('/secrets', function (req, res, next){
       storedSecrets = JSON.parse(fs.readFileSync("./secrets.json", "utf8"));
     } catch(error){
       console.log("You are in development mode");
+      secretsDirectory = "./bin/";
       storedSecrets = JSON.parse(fs.readFileSync("./bin/secrets.json", "utf8"));
     }
     res.render('secrets', {username: req.cookies.username, secrets: storedSecrets});
@@ -49,7 +51,7 @@ router.post('/secrets/modifySecrets', function (req, res, next){
     var newSecret = {secretTitle: req.body.secretTitle, secret: req.body.secret, secretId: (new Date).getTime()};
     storedSecrets.push(newSecret);
   }
-  fs.writeFile("./bin/secrets.json", JSON.stringify(storedSecrets), "utf8", function(err) {
+  fs.writeFile(secretsDirectory + "secrets.json", JSON.stringify(storedSecrets), "utf8", function(err) {
     if(err)
     {
       console.log("\nFailed to save secrets " + err + "\n");
