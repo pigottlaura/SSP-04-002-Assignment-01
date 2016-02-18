@@ -22,13 +22,26 @@ router.post('/login', function(req, res, next){
 });
 
 router.get('/secrets', function (req, res, next){
-  var storedSecrets = fs.readFileSync("bin/secrets.json", "utf8");
+  var storedSecrets = fs.readFileSync("./bin/secrets.json", "utf8");
   //console.log(storedSecrets);
   res.render('secrets', { username: req.body.username, secrets: JSON.parse(storedSecrets)});
 });
 
 router.post('/secrets', function (req, res, next){
-  res.render('secrets', { username: req.body.username});
+  console.log("New Secret Recieved: " + req.body.secretTitle);
+  var newSecret = {secretTitle: req.body.secretTitle, secret: req.body.secret};
+  var storedSecrets = JSON.parse(fs.readFileSync("bin/secrets.json", "utf8"));
+  storedSecrets.push(newSecret);
+  fs.writeFile("./bin/secrets.json", JSON.stringify(storedSecrets), "utf8", function(err) {
+    if(err)
+    {
+      console.log("Failed to save new secret" + err);
+    }
+    else {
+      console.log("New " + newSecret.secretTitle + " successfully saved :)");
+      res.redirect('/users/secrets');
+    }
+  });
 });
 
 module.exports = router;
