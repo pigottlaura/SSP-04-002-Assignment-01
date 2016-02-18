@@ -10,6 +10,7 @@ router.get('/', function(req, res, next) {
 
 router.post('/login', function(req, res, next){
   if(req.body.username == "Laura" && req.body.password == "password"){
+    res.cookie("username", req.body.username);
     res.redirect("/users/secrets");
   } else{
     next();
@@ -23,9 +24,10 @@ router.post('/login', function(req, res, next){
 });
 
 router.get('/secrets', function (req, res, next){
+  console.log(req.cookies.username);
   storedSecrets = JSON.parse(fs.readFileSync("./bin/secrets.json", "utf8"));
   //console.log(storedSecrets);
-  res.render('secrets', {username: req.body.username, secrets: storedSecrets});
+  res.render('secrets', {username: req.cookies.username, secrets: storedSecrets});
 });
 
 router.post('/secrets/modifySecrets', function (req, res, next){
