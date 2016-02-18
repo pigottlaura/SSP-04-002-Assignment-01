@@ -22,9 +22,9 @@ router.post('/login', function(req, res, next){
 });
 
 router.get('/secrets', function (req, res, next){
-  var storedSecrets = JSON.parse(fs.readFileSync("bin/secrets.json", "utf8"));
-  console.log(storedSecrets);
-  res.render('secrets', { username: req.body.username, secrets: storedSecrets});
+  var storedSecrets = fs.readFileSync("bin/secrets.json", "utf8");
+  //console.log(storedSecrets);
+  res.render('secrets', { username: req.body.username, secrets: JSON.parse(storedSecrets)});
 });
 
 router.post('/secrets', function (req, res, next){
