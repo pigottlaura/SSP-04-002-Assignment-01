@@ -23,8 +23,12 @@ router.post('/login', function(req, res, next){
 
 router.get('/secrets', function (req, res, next){
   if(req.cookies.loggedIn == "true"){
-    storedSecrets = JSON.parse(fs.readFileSync("./secrets.json", "utf8"));
-    //console.log(storedSecrets);
+    try {
+      storedSecrets = JSON.parse(fs.readFileSync("./secrets.json", "utf8"));
+    } catch(error){
+      console.log("You are in development mode");
+      storedSecrets = JSON.parse(fs.readFileSync("./bin/secrets.json", "utf8"));
+    }
     res.render('secrets', {username: req.cookies.username, secrets: storedSecrets});
   } else {
     console.log("\nThis user is not yet logged in. Returning them to the home page.\n");
