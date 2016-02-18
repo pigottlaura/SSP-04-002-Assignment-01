@@ -9,7 +9,8 @@ var secretsDirectory = "./";
 router.post('/login', function(req, res, next){
   if(req.body.username == "Laura" && req.body.password == "password"){
     res.cookie("username", req.body.username);
-    res.cookie("loggedIn", true);
+    res.cookie("loggedIn", "true");
+    res.cookie("sortByDate", "true");
     res.redirect("/users/secrets");
   } else{
     next();
@@ -39,6 +40,7 @@ router.get('/secrets', function (req, res, next){
 });
 
 router.post('/secrets/modifySecrets', function (req, res, next){
+  console.log(req.body.submit);
   if(req.body.submit == "Delete this Secret"){
     console.log("\n User wants to delete a secret. SecretId = " + req.body.secretId + "\n");
     for(var i = 0; i < storedSecrets.length; i++){
@@ -51,6 +53,25 @@ router.post('/secrets/modifySecrets', function (req, res, next){
     var newSecret = {secretTitle: req.body.secretTitle, secret: req.body.secret, secretId: (new Date).getTime()};
     storedSecrets.push(newSecret);
   }
+  storedSecrets.sort(function(a, b){
+    var answer = 0;
+    if(req.cookies.sortByDate == "true"){
+      console.log("\nSorting By DATE");
+      var numberA = parseInt(a.secretId);
+  		var numberB = parseInt(b.secretId);
+      answer = numberA-numberB;
+    } else {
+      console.log("\nSorting By TITLE");
+      var titleA = a.secretTitle.toLowerCase();
+  		var titleB = b.secretTitle.toLowerCase();
+      if(a.secretTitle > b.secretTitle){
+        answer = 1;
+      } else if(a.secretTitle < b.secretTitle){
+        answer = -1;
+      }
+    }
+    return answer;
+  });
   fs.writeFile(secretsDirectory + "secrets.json", JSON.stringify(storedSecrets), "utf8", function(err) {
     if(err)
     {
@@ -60,6 +81,7 @@ router.post('/secrets/modifySecrets', function (req, res, next){
       console.log("\nSecrets successfully saved :)\n");
     }
     res.redirect("/users/secrets");
+    console.log("\nSecrets Reloaded\n");
   });
 });
 
