@@ -23,7 +23,7 @@ router.post('/login', function(req, res, next){
 
 router.get('/secrets', function (req, res, next){
   if(req.cookies.loggedIn == "true"){
-    storedSecrets = JSON.parse(fs.readFileSync("./bin/secrets.json", "utf8"));
+    storedSecrets = JSON.parse(fs.readFileSync("./secrets.json", "utf8"));
     //console.log(storedSecrets);
     res.render('secrets', {username: req.cookies.username, secrets: storedSecrets});
   } else {
