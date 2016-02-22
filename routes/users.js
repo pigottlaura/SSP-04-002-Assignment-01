@@ -7,7 +7,9 @@ var secretsDirectory = "./";
 /* GET users listing. */
 
 router.post('/login', function(req, res, next){
+  console.log(req.session.id);
   if(req.body.username == "Laura" && req.body.password == "password"){
+    req.session.username = req.body.username;
     res.cookie("username", req.body.username);
     res.cookie("loggedIn", "true");
     res.cookie("sortByDate", "true");
