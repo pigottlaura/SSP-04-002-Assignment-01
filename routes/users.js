@@ -72,6 +72,8 @@ router.post('/secrets/modifySecrets', function (req, res, next){
     }
     return answer;
   });
+  res.redirect("/users/secrets");
+  
   fs.writeFile(secretsDirectory + "secrets.json", JSON.stringify(storedSecrets), "utf8", function(err) {
     if(err)
     {
@@ -82,9 +84,7 @@ router.post('/secrets/modifySecrets', function (req, res, next){
     }
     
     console.log("\nSecrets Reloaded\n");
-  });
-  
-  res.redirect("/users/secrets");
+  });  
 });
 
 module.exports = router;
