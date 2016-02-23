@@ -6,10 +6,6 @@ var secretsDirectory = "./";
 
 /* GET users listing. */
 
-router.all("/", function(req, res, next){
-    console.log("\nUser Facility\n");
-});
-
 router.get('/createAccount', function(req, res, next){
     if(req.session.id == null){
         console.log("\nnew user\n");
