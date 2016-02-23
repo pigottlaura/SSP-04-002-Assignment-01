@@ -50,6 +50,7 @@ router.get('/secrets', function (req, res, next){
 
 router.post('/secrets/modifySecrets', function (req, res, next){
   console.log(req.body.submit);
+  
   if(req.body.submit == "Delete this Secret"){
     console.log("\n User wants to delete a secret. SecretId = " + req.body.secretId + "\n");
     for(var i = 0; i < storedSecrets.length; i++){
@@ -62,6 +63,7 @@ router.post('/secrets/modifySecrets', function (req, res, next){
     var newSecret = {secretTitle: req.body.secretTitle, secret: req.body.secret, secretId: (new Date).getTime()};
     storedSecrets.push(newSecret);
   }
+  
   storedSecrets.sort(function(a, b){
     var answer = 0;
     if(req.cookies.sortByDate == "true"){
@@ -81,6 +83,9 @@ router.post('/secrets/modifySecrets', function (req, res, next){
     }
     return answer;
   });
+  
+  res.redirect("/users/secrets");
+  
   fs.writeFile(secretsDirectory + "secrets.json", JSON.stringify(storedSecrets), "utf8", function(err) {
     if(err)
     {
@@ -89,9 +94,9 @@ router.post('/secrets/modifySecrets', function (req, res, next){
     else {
       console.log("\nSecrets successfully saved :)\n");
     }
-    res.redirect("/users/secrets");
+    
     console.log("\nSecrets Reloaded\n");
-  });
+  });  
 });
 
 module.exports = router;
