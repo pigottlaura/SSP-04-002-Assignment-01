@@ -30,8 +30,15 @@ app.use("/", session({
 }));
 
 app.use("/users", function(req, res, next){
-   console.log("\nUser Facility\n");
-   next();
+    console.log("\nAttempt to access user facility");
+    if(req.session.username != null)
+    {
+        console.log("This user is logged in. Taking them to the secrets page.\n");
+        next();
+    } else {
+        console.log("This user is not not logged in. Returning them to the home page.\n");
+        res.redirect("/");
+    }
 });
 
 app.use('/', routes);
