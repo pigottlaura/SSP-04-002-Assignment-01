@@ -12,29 +12,28 @@ router.get('/createAccount', function(req, res, next){
     } else {
         console.log("\nlogged in user\n");
     }
-    console.log("\n" + req.session.id + "\n");
 });
 
 router.post('/login', function(req, res, next){
-  console.log(req.session.id);
-  if(req.body.username == "Laura" && req.body.password == "password"){
-    req.session.username = req.body.username;
-    res.cookie("loggedIn", "true");
-    res.cookie("sortByDate", "true");
-    res.redirect("/users/secrets");
-  } else{
-    next();
-  }
+    if(req.session.id == null){
+        res.redirect("/");
+    } else {
+        res.redirect("/users/secrets");
+        console.log("\nWelcome Back " + req.session.id + "\n");
+    }
 });
 
+/*
 router.post('/login', function(req, res, next){
   var err = new Error('Wrong Username or Password');
   err.status = 401;
   res.render("loginError", {message:"Wrong Username or Password", error: err});
 });
+*/
 
 router.get('/secrets', function (req, res, next){
-  if(req.cookies.loggedIn == "true"){
+    console.log(req.session.id);
+  if(req.session.id != null){
     try {
       storedSecrets = JSON.parse(fs.readFileSync("./secrets.json", "utf8"));
     } catch(error){

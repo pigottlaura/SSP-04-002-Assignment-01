@@ -23,10 +23,17 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(session({
+app.use("/login", session({
   secret: 'mySecretsApp',
   resave: false,
-  saveUninitialized: false
+  saveUninitialized: false,
+  genid: function(req) {
+      var id = null;
+      if (req.body.username == "Laura" && req.body.password == "password"){
+        id = req.body.username + (new Date).getTime(); 
+      }
+      return id;
+  },
 }));
 
 app.use('/', routes);
