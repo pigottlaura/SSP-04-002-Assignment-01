@@ -13,22 +13,35 @@ var mysql = require('mysql');
 
 // Setting up the connection to my local mySql database (running on a WAMP server)
 var connection = mysql.createConnection({
-  host     : "localhost",
-  user     : "root",
-  password : "",
-  database : "mySecrets"
+    host: "localhost",
+    user: "root",
+    password: "",
+    database: "mySecrets"
 });
 
 // Connecting to the database
-connection.connect();
+connection.connect(function (err) {
+    if (err) {
+        console.error("\nCould not connect to server " + err.stack + "\n");
+    } else {
+        console.log("\nSuccessfully connected to database with id " + connection.threadId + "\n");
+    }
+});
+
+//connection.end();
 
 // Querying the database
-connection.query("SELECT * FROM User", function(err, rows, fields) {
-  if(err){
-      console.log("\nCould not connect to server" + err + "\n");
-  } else {
-      console.log("\nSuccessfully connected to server. The user's username is: " + rows[0].userUsername + "\n");
-  }
+connection.query("SELECT * FROM User", function (err, rows, fields) {
+    console.log("Queried all users from the database");
+    if (err) {
+        console.log("Could not process query. " + err);
+    } else {
+        console.log("Response recieved from query");
+        for(var i = 0; i < rows.length; i++){
+            console.log("User " + i + "'s username is: " + rows[i].username);
+        }
+        console.log("\n");
+    }
 });
 
 var app = express();
@@ -46,15 +59,14 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use("/", session({
-  secret: 'mySecretsApp',
-  resave: false,
-  saveUninitialized: false
+    secret: 'mySecretsApp',
+    resave: false,
+    saveUninitialized: false
 }));
 
-app.use("/users", function(req, res, next){
+app.use("/users", function (req, res, next) {
     console.log("\nAttempt to access user facility");
-    if(req.session.username != null)
-    {
+    if (req.session.username != null) {
         console.log("This user is logged in. Taking them to the secrets page.\n");
         next();
     } else {
@@ -67,10 +79,10 @@ app.use('/', routes);
 app.use('/users', users);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
+app.use(function (req, res, next) {
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
 });
 
 // error handlers
@@ -78,23 +90,23 @@ app.use(function(req, res, next) {
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
-  app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-      message: err.message,
-      error: err
+    app.use(function (err, req, res, next) {
+        res.status(err.status || 500);
+        res.render('error', {
+            message: err.message,
+            error: err
+        });
     });
-  });
 }
 
 // production error handler
 // no stacktraces leaked to user
-app.use(function(err, req, res, next) {
-  res.status(err.status || 500);
-  res.render('error', {
-    message: err.message,
-    error: {}
-  });
+app.use(function (err, req, res, next) {
+    res.status(err.status || 500);
+    res.render('error', {
+        message: err.message,
+        error: {}
+    });
 });
 
 
