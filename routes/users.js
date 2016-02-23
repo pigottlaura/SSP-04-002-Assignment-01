@@ -80,9 +80,11 @@ router.post('/secrets/modifySecrets', function (req, res, next){
     else {
       console.log("\nSecrets successfully saved :)\n");
     }
-    res.redirect("/users/secrets");
+    
     console.log("\nSecrets Reloaded\n");
   });
+  
+  res.redirect("/users/secrets");
 });
 
 module.exports = router;
