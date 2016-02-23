@@ -53,6 +53,7 @@ router.post('/secrets/modifySecrets', function (req, res, next){
     var newSecret = {secretTitle: req.body.secretTitle, secret: req.body.secret, secretId: (new Date).getTime()};
     storedSecrets.push(newSecret);
   }
+  /*
   storedSecrets.sort(function(a, b){
     var answer = 0;
     if(req.cookies.sortByDate == "true"){
@@ -72,6 +73,7 @@ router.post('/secrets/modifySecrets', function (req, res, next){
     }
     return answer;
   });
+  */
   res.redirect("/users/secrets");
   
   fs.writeFile(secretsDirectory + "secrets.json", JSON.stringify(storedSecrets), "utf8", function(err) {
