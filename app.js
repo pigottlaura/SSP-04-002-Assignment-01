@@ -9,6 +9,28 @@ var session = require('express-session');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
+var mysql = require('mysql');
+
+// Setting up the connection to my local mySql database (running on a WAMP server)
+var connection = mysql.createConnection({
+  host     : "localhost",
+  user     : "root",
+  password : "",
+  database : "mySecrets"
+});
+
+// Connecting to the database
+connection.connect();
+
+// Querying the database
+connection.query("SELECT * FROM User", function(err, rows, fields) {
+  if(err){
+      console.log("\nCould not connect to server" + err + "\n");
+  } else {
+      console.log("\nSuccessfully connected to server. The user's username is: " + rows[0].userUsername + "\n");
+  }
+});
+
 var app = express();
 
 // view engine setup
