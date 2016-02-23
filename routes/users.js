@@ -6,6 +6,10 @@ var secretsDirectory = "./";
 
 /* GET users listing. */
 
+router.all("/", function(req, res, next){
+    console.log("\nUser Facility\n");
+});
+
 router.get('/createAccount', function(req, res, next){
     if(req.session.id == null){
         console.log("\nnew user\n");
@@ -15,25 +19,25 @@ router.get('/createAccount', function(req, res, next){
 });
 
 router.post('/login', function(req, res, next){
-    if(req.session.id == null){
-        res.redirect("/");
-    } else {
+    if(req.body.username == "Laura" && req.body.password == "password"){
+        req.session.username = req.body.username;
+        //res.cookie("loggedIn", "true");
+        //res.cookie("sortByDate", "true");
         res.redirect("/users/secrets");
-        console.log("\nWelcome Back " + req.session.id + "\n");
+    } else{
+        next();
     }
 });
 
-/*
 router.post('/login', function(req, res, next){
   var err = new Error('Wrong Username or Password');
   err.status = 401;
   res.render("loginError", {message:"Wrong Username or Password", error: err});
 });
-*/
 
 router.get('/secrets', function (req, res, next){
-    console.log(req.session.id);
-  if(req.session.id != null){
+  console.log(req.session.id);
+  if(req.session.username != null){
     try {
       storedSecrets = JSON.parse(fs.readFileSync("./secrets.json", "utf8"));
     } catch(error){

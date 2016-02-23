@@ -23,18 +23,16 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use("/login", session({
+app.use("/", session({
   secret: 'mySecretsApp',
   resave: false,
-  saveUninitialized: false,
-  genid: function(req) {
-      var id = null;
-      if (req.body.username == "Laura" && req.body.password == "password"){
-        id = req.body.username + (new Date).getTime(); 
-      }
-      return id;
-  },
+  saveUninitialized: false
 }));
+
+app.use("/users", function(req, res, next){
+   console.log("\nUser Facility\n");
+   next();
+});
 
 app.use('/', routes);
 app.use('/users', users);
