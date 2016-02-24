@@ -18,6 +18,7 @@ var connection = mysql.createConnection({
 /* GET users listing. */
 
 router.get('/secrets', function (req, res, next) {
+    // Checking if we are already connected to the server
     if (connection.threadId == null) {
         // Connecting to the database
         connection.connect(function (err) {
@@ -29,14 +30,14 @@ router.get('/secrets', function (req, res, next) {
         });
         
         // Querying the database
-        connection.query("SELECT u.username AS 'username', s.secretTitle as 'secretTitle' FROM Secret s JOIN User u ON s.secretUserId = u.userId WHERE u.username = 'pigottlaura'", function (err, rows, fields) {
+        connection.query("SELECT u.username AS 'username', s.secretTitle AS 'secretTitle', s.secretDescription AS 'secret' FROM Secret s JOIN User u ON s.secretUserId = u.userId WHERE u.username = 'pigottlaura'", function (err, rows, fields) {
             console.log("Queried all users from the database");
             if (err) {
                 console.log("Could not process query. " + err);
             } else {
                 console.log("Response recieved from query");
                 for (var i = 0; i < rows.length; i++) {
-                    console.log(rows[i].username + "'s secret is: " + rows[i].secretTitle);
+                    console.log(rows[i].username + "'s secret is: " + rows[i].secretTitle + ": " + rows[i].secret);
                 }
                 console.log("\n");
                 storedSecrets = rows[i];
