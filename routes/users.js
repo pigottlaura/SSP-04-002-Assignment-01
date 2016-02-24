@@ -72,7 +72,7 @@ router.post('/secrets/modifySecrets', function (req, res, next) {
     } else if (req.body.submit == "Keep my Secret") {
         var newSecretId =  (new Date).getTime() + req.body.secretTitle;
         console.log("New Secret Recieved: " + newSecretId);
-        connection.query("INSERT INTO Secret(secretId, secretTitle, secretDescription, secretUserId) VALUES(" + mysql.escape(newSecretId) + ", AES_ENCRYPT(" + connection.escape(req.body.secretTitle) + ", 'hideSecretDescription'), AES_ENCRYPT(" + connection.escape(req.body.secret) + ", 'keepMySecret'), 1)", function (err, rows, fields) {
+        connection.query("INSERT INTO Secret(secretId, secretTitle, secretDescription, secretUserId) VALUES(" + mysql.escape(newSecretId) + ", " + connection.escape(req.body.secretTitle) + ", AES_ENCRYPT(" + connection.escape(req.body.secret) + ", 'hideSecretDescription'), 1)", function (err, rows, fields) {
             if(err){
                 console.log("\nNew secret could not be saved: " + err + "\n");
             } else {
