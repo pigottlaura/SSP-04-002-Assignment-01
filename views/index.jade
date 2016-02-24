@@ -3,7 +3,9 @@ extends layout
 block content
   h1= title
   h2 Welcome to #{title}
-  p In order to access your secrets, please log in using your credentials below
+  p
+    | In order to access your secrets, please log in using your credentials below, or create a new account 
+    a(href='/createAccount') here
   form(method="POST" action="/login")
     label(for="username") Username:
     input(type="text" name="username" id="username")

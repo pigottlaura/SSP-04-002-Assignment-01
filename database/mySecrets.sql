@@ -31,7 +31,7 @@ CREATE TABLE Secret(
 	secretId VARCHAR(20) NOT NULL,
     secretTitle VARBINARY(100) NOT NULL,
     secretDescription VARBINARY(400),
-    secretUserId INT(11),
+    secretUserId INT(11) NOT NULL,
     secretTimePosted TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     CONSTRAINT secret_userId FOREIGN KEY(secretUserId) REFERENCES User(userId),
     CONSTRAINT secret_pk PRIMARY KEY(secretId)

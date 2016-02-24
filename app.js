@@ -29,6 +29,8 @@ app.use("/", session({
     saveUninitialized: false
 }));
 
+app.use('/', routes);
+//app.use("/createAccount", routes);
 app.use("/users", function (req, res, next) {
     console.log("Attempt to access user facility");
     if (req.session.username != null) {
@@ -39,8 +41,6 @@ app.use("/users", function (req, res, next) {
         res.redirect("/");
     }
 });
-
-app.use('/', routes);
 app.use('/users', users);
 
 // catch 404 and forward to error handler
