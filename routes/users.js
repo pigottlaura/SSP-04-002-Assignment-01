@@ -61,16 +61,21 @@ router.post('/secrets/modifySecrets', function (req, res, next) {
     console.log(req.body.submit);
 
     if (req.body.submit == "Delete this Secret") {
-        console.log("\n User wants to delete a secret. SecretId = " + req.body.secretId + "\n");
+        console.log("User wants to delete a secret. SecretId = " + req.body.secretId);
         for (var i = 0; i < storedSecrets.length; i++) {
             if (storedSecrets[i].secretId == req.body.secretId) {
                 storedSecrets.splice(i, 1);
             }
         }
     } else if (req.body.submit == "Keep my Secret") {
-        console.log("\nNew Secret Recieved: " + req.body.secretTitle + "\n");
-        var newSecret = { secretTitle: req.body.secretTitle, secret: req.body.secret, secretId: (new Date).getTime() };
-        storedSecrets.push(newSecret);
+        console.log("New Secret Recieved: " + req.body.secretTitle);
+        connection.query("INSERT INTO Secret(secretId, secretTitle, secretDescription, secretUserId) VALUES(" + connection.escape((new Date).getTime()) + ", " + connection.escape(req.body.secretTitle) + ", " + connection.escape(req.body.secret) + ", 1)", function (err, rows, fields) {
+            if(err){
+                console.log("\nNew secret could not be saved: " + err + "\n");
+            } else {
+                console.log("Successfully saved new secret");
+            }
+        });
     }
     /*
     storedSecrets.sort(function (a, b) {
