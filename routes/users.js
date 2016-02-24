@@ -29,14 +29,14 @@ router.get('/secrets', function (req, res, next) {
         });
         
         // Querying the database
-        connection.query("SELECT * FROM Secret WHERE secretUserId IN (SELECT userId FROM User WHERE username = 'pigottlaura')", function (err, rows, fields) {
+        connection.query("SELECT u.username AS 'username', s.secretTitle as 'secretTitle' FROM Secret s JOIN User u ON s.secretUserId = u.userId WHERE u.username = 'pigottlaura'", function (err, rows, fields) {
             console.log("Queried all users from the database");
             if (err) {
                 console.log("Could not process query. " + err);
             } else {
                 console.log("Response recieved from query");
                 for (var i = 0; i < rows.length; i++) {
-                    console.log("User id number " + rows[i].secretUserId + "'s secret is: " + rows[i].secretTitle);
+                    console.log(rows[i].username + "'s secret is: " + rows[i].secretTitle);
                 }
                 console.log("\n");
                 storedSecrets = rows[i];
