@@ -3,8 +3,11 @@
 Assignment-01 for the Server Side Programming module, as part of the Creative Mulitimedia B.Sc (hons) degree course in Limerick Institute of Technology, Clonmel
 
 - App created using express-generator
-- Persisting sessions using cookies
-    - Will be changing over to using express-session to handle this
-- Only users that log in using the username "Laura" and the password "password" can access the secrets within the app
-    - Will be expanding this so that people can create new accounts, and log in to see their own secrets
+- Authenticating sessions using express-sessions
+- Anyone that visits the app can create a new account, and log in to store their own secrets
+- Persisting user login credentials, as well as their own secrets in local/remote MySQL Database
+- All secrets, as well as sensitive log in data such as passwords, are encrypted for security and privacy purposes
+- Secrets can be sorted by their titles or by the time they were created
+- Storing current sort preference using cookie-parser
 - This application is running live on Azure
+- The MySQL database is also running live on Azure (I also have a local one running on the WAMP server for testing purposes)
