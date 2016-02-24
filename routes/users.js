@@ -40,14 +40,13 @@ router.get('/secrets', function (req, res, next) {
                     console.log(rows[i].username + "'s secret is: " + rows[i].secretTitle + ": " + rows[i].secret);
                 }
                 console.log("\n");
-                storedSecrets = rows[i];
+                storedSecrets = rows;
+                res.render('secrets', { username: req.cookies.username, secrets: storedSecrets });
             }
         });
     } else {
         console.log("Already connected to database");
     }
-    
-    res.render('secrets', { username: req.cookies.username, secrets: storedSecrets });
 });
 
 router.post('/secrets/modifySecrets', function (req, res, next) {
@@ -65,7 +64,7 @@ router.post('/secrets/modifySecrets', function (req, res, next) {
         var newSecret = { secretTitle: req.body.secretTitle, secret: req.body.secret, secretId: (new Date).getTime() };
         storedSecrets.push(newSecret);
     }
-
+    /*
     storedSecrets.sort(function (a, b) {
         var answer = 0;
         if (req.cookies.sortByDate == "true") {
@@ -85,9 +84,11 @@ router.post('/secrets/modifySecrets', function (req, res, next) {
         }
         return answer;
     });
+    */
 
     res.redirect("/users/secrets");
-
+    
+    /*
     fs.writeFile(secretsDirectory + "secrets.json", JSON.stringify(storedSecrets), "utf8", function (err) {
         if (err) {
             console.log("\nFailed to save secrets " + err + "\n");
@@ -95,9 +96,9 @@ router.post('/secrets/modifySecrets', function (req, res, next) {
         else {
             console.log("\nSecrets successfully saved :)\n");
         }
-
         console.log("\nSecrets Reloaded\n");
     });
+    */
 });
 
 module.exports = router;
