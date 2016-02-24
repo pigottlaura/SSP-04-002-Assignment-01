@@ -80,41 +80,7 @@ router.post('/secrets/modifySecrets', function (req, res, next) {
             }
         });
     }
-    /*
-    storedSecrets.sort(function (a, b) {
-        var answer = 0;
-        if (req.cookies.sortByDate == "true") {
-            console.log("\nSorting By DATE");
-            var numberA = parseInt(a.secretId);
-            var numberB = parseInt(b.secretId);
-            answer = numberA - numberB;
-        } else {
-            console.log("\nSorting By TITLE");
-            var titleA = a.secretTitle.toLowerCase();
-            var titleB = b.secretTitle.toLowerCase();
-            if (titleA.secretTitle > titleB.secretTitle) {
-                answer = 1;
-            } else if (titleA.secretTitle < titleB.secretTitle) {
-                answer = -1;
-            }
-        }
-        return answer;
-    });
-    */
-
     res.redirect("/users/secrets");
-    
-    /*
-    fs.writeFile(secretsDirectory + "secrets.json", JSON.stringify(storedSecrets), "utf8", function (err) {
-        if (err) {
-            console.log("\nFailed to save secrets " + err + "\n");
-        }
-        else {
-            console.log("\nSecrets successfully saved :)\n");
-        }
-        console.log("\nSecrets Reloaded\n");
-    });
-    */
 });
 
 module.exports = router;
