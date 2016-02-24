@@ -1,11 +1,15 @@
 extends layout
 
 block content
-  h1= title
   h2 Welcome to #{title}
   p
-    | In order to access your secrets, please log in using your credentials below, or create a new account 
+    | In order to access your secrets, please log in using your credentials below or
+    #warning
+    if warning.length > 0
+        p(class="warning") #{warning}
+    | you can create a new account 
     a(href='/createAccount') here
+
   form(method="POST" action="/login")
     label(for="username") Username:
     input(type="text" name="username" id="username")

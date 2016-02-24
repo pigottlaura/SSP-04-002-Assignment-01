@@ -67,7 +67,7 @@ router.get('/secrets', function (req, res, next) {
             
             // Rendering the secrets view, using the username of the current user, and passing in the 
             // secrets of theirs which we just retrieved from the database (if any)
-            res.render('secrets', { username: req.session.username, secrets: rows });
+            res.render('secrets', {title: "My Secrets", username: req.session.username, secrets: rows });
         }
     });
 });

@@ -1,10 +1,8 @@
 doctype html
 html
   head
-    title= title
+    title My Secrets Vault - #{title}
     link(rel='stylesheet', href='/stylesheets/style.css')
   body
     h1 Secrets
-    form(method="post" action="/logout")
-        input(type="submit" name="submit" value="Logout")
     block content

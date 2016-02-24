@@ -10,3 +10,7 @@ a {
 .secret span {
   color: #00FF00;
 }
+
+.warning {
+    color: red;
+}

@@ -1,11 +1,11 @@
 extends layout
 
 block content
-  h1= title
+  h2= title
   p In order to store your secrets, please create an account now.
   #warning
   if warning.length > 0
-    p #{warning}
+    p(class="warning") #{warning}
   form(method="POST" action="/createAccount")
     label(for="username") Username:
     input(type="text" name="username" id="username")
