@@ -29,14 +29,16 @@ CREATE TABLE User(
 SELECT '<Creating Table Secret>' AS '';
 CREATE TABLE Secret(
 	secretId VARCHAR(20) NOT NULL,
-    secretTitle VARCHAR(45) NOT NULL,
-    secretDescription VARCHAR(500),
+    secretTitle VARCHAR(200) NOT NULL,
+    secretDescription VARCHAR(100),
     secretUserId INT(11),
     secretTimePosted TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     CONSTRAINT secret_userId FOREIGN KEY(secretUserId) REFERENCES User(userId),
     CONSTRAINT secret_pk PRIMARY KEY(secretId)
 );
 
-INSERT INTO User(username, userPassword) VALUES("pigottlaura", "testing");
+INSERT INTO User(username, userPassword) VALUES("Laura", "testing");
+INSERT INTO User(username, userPassword) VALUES("usernameA", "testing");
 INSERT INTO User(username, userPassword) VALUES("usernameB", "testing");
+
 SELECT '<Finished mySecrets script>' AS '';

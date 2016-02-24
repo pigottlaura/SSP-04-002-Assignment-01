@@ -7,6 +7,9 @@ var sortBy;
 
 // Setting up the connection to my local mySql database (running on a WAMP server)
 var connection = mysql.createConnection({
+    host: "localHost",
+    user: "root",
+    password: "",
     database: "mySecrets"
 });
 
@@ -36,8 +39,8 @@ router.get('/secrets', function (req, res, next) {
 
 router.get('/secrets', function (req, res, next) {
     // Querying the database
-    connection.query("SELECT u.username AS 'username', AES_DECRYPT(s.secretTitle, 'encryptSecretTitle') AS 'secretTitle',  AES_DECRYPT(s.secretDescription, 'encryptSecretDescription') AS 'secret', s.secretId AS 'secretId' FROM Secret s JOIN User u ON s.secretUserId = u.userId WHERE u.username = 'usernameA' ORDER BY s." + sortBy, function (err, rows, fields) {
-        console.log("Queried the user's secrets from the database");
+    connection.query("SELECT u.username AS 'username', AES_DECRYPT(s.secretTitle, 'encryptSecretTitle') AS 'secretTitle',  AES_DECRYPT(s.secretDescription, 'encryptSecretDescription') AS 'secret', s.secretId AS 'secretId' FROM Secret s JOIN User u ON s.secretUserId = u.userId WHERE u.username = " + connection.escape(req.session.username) + " ORDER BY s." + sortBy, function (err, rows, fields) {
+        console.log("Queried " + req.session.username + "'s secrets from the database");
         if (err) {
             console.log("Could not process query. " + err);
         } else {
@@ -49,7 +52,8 @@ router.get('/secrets', function (req, res, next) {
                 console.log(rows[i].username + "'s secret is: " + rows[i].secretTitle + ": " + rows[i].secret);
             }
             console.log("\n");
-            res.render('secrets', { username: req.cookies.username, secrets: rows});
+            
+            res.render('secrets', { username: req.session.username, secrets: rows});
         }
     });
 });
@@ -69,7 +73,7 @@ router.post('/secrets/modifySecrets', function (req, res, next) {
     } else if (req.body.submit == "Keep my Secret") {
         var newSecretId =  (new Date).getTime() + "-" + req.session.username;
         console.log("New Secret Recieved: " + newSecretId);
-        connection.query("INSERT INTO Secret(secretId, secretTitle, secretDescription, secretUserId) VALUES(" + mysql.escape(newSecretId) + ", AES_ENCRYPT(" + connection.escape(req.body.secretTitle) + ", 'encryptSecretTitle'), AES_ENCRYPT(" + connection.escape(req.body.secret) + ", 'encryptSecretDescription'), 1)", function (err, rows, fields) {
+        connection.query("INSERT INTO Secret(secretId, secretTitle, secretDescription, secretUserId) VALUES(" + mysql.escape(newSecretId) + ", AES_ENCRYPT(" + connection.escape(req.body.secretTitle) + ", 'encryptSecretTitle'), AES_ENCRYPT(" + connection.escape(req.body.secret) + ", 'encryptSecretDescription'), (SELECT userId FROM User WHERE username = " + connection.escape(req.session.username) + "))", function (err, rows, fields) {
             if(err){
                 console.log("\nNew secret could not be saved: " + err + "\n");
             } else {
