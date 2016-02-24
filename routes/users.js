@@ -39,7 +39,7 @@ router.get('/secrets', function (req, res, next) {
 
 router.get('/secrets', function (req, res, next) {
     // Querying the database
-    connection.query("SELECT u.username AS 'username', s.secretTitle AS 'secretTitle', s.secretDescription AS 'secret', s.secretId AS 'secretId' FROM Secret s JOIN User u ON s.secretUserId = u.userId WHERE u.username = 'usernameA' ORDER BY s." + sortBy, function (err, rows, fields) {
+    connection.query("SELECT u.username AS 'username', s.secretTitle AS 'secretTitle',  AES_DECRYPT(s.secretDescription, 'hideSecretDescription') AS 'secret', s.secretId AS 'secretId' FROM Secret s JOIN User u ON s.secretUserId = u.userId WHERE u.username = 'usernameA' ORDER BY s." + sortBy, function (err, rows, fields) {
         console.log("Queried the user's secrets from the database");
         if (err) {
             console.log("Could not process query. " + err);
@@ -72,7 +72,7 @@ router.post('/secrets/modifySecrets', function (req, res, next) {
     } else if (req.body.submit == "Keep my Secret") {
         var newSecretId =  (new Date).getTime() + req.body.secretTitle;
         console.log("New Secret Recieved: " + newSecretId);
-        connection.query("INSERT INTO Secret(secretId, secretTitle, secretDescription, secretUserId) VALUES(" + mysql.escape(newSecretId) + ", " + connection.escape(req.body.secretTitle) + ", " + connection.escape(req.body.secret) + ", 1)", function (err, rows, fields) {
+        connection.query("INSERT INTO Secret(secretId, secretTitle, secretDescription, secretUserId) VALUES(" + mysql.escape(newSecretId) + ", AES_ENCRYPT(" + connection.escape(req.body.secretTitle) + ", 'hideSecretDescription'), AES_ENCRYPT(" + connection.escape(req.body.secret) + ", 'keepMySecret'), 1)", function (err, rows, fields) {
             if(err){
                 console.log("\nNew secret could not be saved: " + err + "\n");
             } else {
