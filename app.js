@@ -30,7 +30,6 @@ app.use("/", session({
 }));
 
 app.use('/', routes);
-//app.use("/createAccount", routes);
 app.use("/users", function (req, res, next) {
     console.log("Attempt to access user facility");
     if (req.session.username != null) {
