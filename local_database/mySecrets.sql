@@ -37,9 +37,13 @@ CREATE TABLE Secret(
     CONSTRAINT secret_pk PRIMARY KEY(secretId)
 );
 
-INSERT INTO User(username, userPassword) VALUES("lauraPigott", "testing");
-INSERT INTO User(username, userPassword) VALUES("pigottLaura", "testing");
-INSERT INTO Secret(secretTitle, secretDescription, secretUserId) VALUES("My First Secret", "This is my first SQL secret", 1);
-INSERT INTO Secret(secretTitle, secretDescription, secretUserId) VALUES("My Second Secret", "This is my Second SQL secret", 2);
+INSERT INTO User(username, userPassword) VALUES("usernameA", "testing");
+INSERT INTO User(username, userPassword) VALUES("usernameB", "testing");
+INSERT INTO Secret(secretTitle, secretDescription, secretUserId) VALUES("C - My First Secret", "This is usernameA's first SQL secret", 1);
+INSERT INTO Secret(secretTitle, secretDescription, secretUserId) VALUES("A - My First Secret", "This is usernameA's second SQL secret", 1);
+INSERT INTO Secret(secretTitle, secretDescription, secretUserId) VALUES("B - My First Secret", "This is usernameA's third SQL secret", 1);
+INSERT INTO Secret(secretTitle, secretDescription, secretUserId) VALUES("Y - My Second Secret", "This is usernameB's first SQL secret", 2);
+INSERT INTO Secret(secretTitle, secretDescription, secretUserId) VALUES("Z - My Second Secret", "This is usernameB's Second SQL secret", 2);
+INSERT INTO Secret(secretTitle, secretDescription, secretUserId) VALUES("X - My Second Secret", "This is usernameB's third SQL secret", 2);
 
 SELECT '<Finished mySecrets script>' AS '';

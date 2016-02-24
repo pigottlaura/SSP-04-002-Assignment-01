@@ -3,7 +3,7 @@ var router = express.Router();
 var fs = require("fs");
 var mysql = require('mysql');
 
-var storedSecrets;
+var sortBy;
 
 // Setting up the connection to my local mySql database (running on a WAMP server)
 var connection = mysql.createConnection({
@@ -25,28 +25,36 @@ router.get('/secrets', function (req, res, next) {
             if (err) {
                 console.error("\nCould not connect to server " + err.stack + "\n");
             } else {
-                console.log("\nSuccessfully connected to database with id " + connection.threadId + "\n");
-            }
-        });
-        
-        // Querying the database
-        connection.query("SELECT u.username AS 'username', s.secretTitle AS 'secretTitle', s.secretDescription AS 'secret' FROM Secret s JOIN User u ON s.secretUserId = u.userId WHERE u.username = 'pigottlaura'", function (err, rows, fields) {
-            console.log("Queried all users from the database");
-            if (err) {
-                console.log("Could not process query. " + err);
-            } else {
-                console.log("Response recieved from query");
-                for (var i = 0; i < rows.length; i++) {
-                    console.log(rows[i].username + "'s secret is: " + rows[i].secretTitle + ": " + rows[i].secret);
-                }
-                console.log("\n");
-                storedSecrets = rows;
-                res.render('secrets', { username: req.cookies.username, secrets: storedSecrets });
+                console.log("Successfully connected to database");
             }
         });
     } else {
         console.log("Already connected to database");
     }
+    // Results will be sorted as specified by the user (on the client side)
+    sortBy = req.cookies.sortByDate == "true" ? "secretTimePosted" : "secretTitle";
+    console.log("Results will be sorted by " + sortBy);
+    next();
+});
+
+router.get('/secrets', function (req, res, next) {
+    // Querying the database
+    connection.query("SELECT u.username AS 'username', s.secretTitle AS 'secretTitle', s.secretDescription AS 'secret' FROM Secret s JOIN User u ON s.secretUserId = u.userId WHERE u.username = 'usernameA' ORDER BY s." + sortBy, function (err, rows, fields) {
+        console.log("Queried the user's secrets from the database");
+        if (err) {
+            console.log("Could not process query. " + err);
+        } else {
+            console.log("Response recieved from query");
+            if (rows.length < 1) {
+                console.log("No data found to match your query");
+            }
+            for (var i = 0; i < rows.length; i++) {
+                console.log(rows[i].username + "'s secret is: " + rows[i].secretTitle + ": " + rows[i].secret);
+            }
+            console.log("\n");
+            res.render('secrets', { username: req.cookies.username, secrets: rows });
+        }
+    });
 });
 
 router.post('/secrets/modifySecrets', function (req, res, next) {
