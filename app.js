@@ -30,12 +30,12 @@ app.use("/", session({
 }));
 
 app.use("/users", function (req, res, next) {
-    console.log("\nAttempt to access user facility");
+    console.log("Attempt to access user facility");
     if (req.session.username != null) {
-        console.log("This user is logged in. Taking them to the secrets page.\n");
+        console.log("This user is logged in. Taking them to the secrets page.");
         next();
     } else {
-        console.log("This user is not not logged in. Returning them to the home page.\n");
+        console.log("This user is not not logged in. Returning them to the home page.");
         res.redirect("/");
     }
 });

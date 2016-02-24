@@ -28,7 +28,7 @@ CREATE TABLE User(
 
 SELECT '<Creating Table Secret>' AS '';
 CREATE TABLE Secret(
-	secretId INT NOT NULL,
+	secretId VARCHAR(20) NOT NULL,
     secretTitle VARCHAR(45) NOT NULL,
     secretDescription VARCHAR(500),
     secretUserId INT(11),
@@ -39,12 +39,4 @@ CREATE TABLE Secret(
 
 INSERT INTO User(username, userPassword) VALUES("usernameA", "testing");
 INSERT INTO User(username, userPassword) VALUES("usernameB", "testing");
-INSERT INTO Secret(secretId, secretTitle, secretDescription, secretUserId) VALUES(123, "C - My First Secret", "This is usernameA's first SQL secret", 1);
-INSERT INTO Secret(secretId, secretTitle, secretDescription, secretUserId) VALUES(456, "A - My First Secret", "This is usernameA's second SQL secret", 1);
-INSERT INTO Secret(secretId, secretTitle, secretDescription, secretUserId) VALUES(789, "B - My First Secret", "This is usernameA's third SQL secret", 1);
-INSERT INTO Secret(secretId, secretTitle, secretDescription, secretUserId) VALUES(1011, "Y - My Second Secret", "This is usernameB's first SQL secret", 2);
-INSERT INTO Secret(secretId, secretTitle, secretDescription, secretUserId) VALUES(1213, "Z - My Second Secret", "This is usernameB's Second SQL secret", 2);
-INSERT INTO Secret(secretId, secretTitle, secretDescription, secretUserId) VALUES(1415, "X - My Second Secret", "This is usernameB's third SQL secret", 2);
-
-INSERT INTO Secret(secretId, secretTitle, secretDescription, secretUserId) VALUES(1456275503, "testing", "text", 1);
 SELECT '<Finished mySecrets script>' AS '';

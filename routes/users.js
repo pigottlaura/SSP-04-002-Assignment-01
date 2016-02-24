@@ -39,7 +39,7 @@ router.get('/secrets', function (req, res, next) {
 
 router.get('/secrets', function (req, res, next) {
     // Querying the database
-    connection.query("SELECT u.username AS 'username', s.secretTitle AS 'secretTitle', s.secretDescription AS 'secret' FROM Secret s JOIN User u ON s.secretUserId = u.userId WHERE u.username = 'usernameA' ORDER BY s." + sortBy, function (err, rows, fields) {
+    connection.query("SELECT u.username AS 'username', s.secretTitle AS 'secretTitle', s.secretDescription AS 'secret', s.secretId AS 'secretId' FROM Secret s JOIN User u ON s.secretUserId = u.userId WHERE u.username = 'usernameA' ORDER BY s." + sortBy, function (err, rows, fields) {
         console.log("Queried the user's secrets from the database");
         if (err) {
             console.log("Could not process query. " + err);
@@ -52,7 +52,7 @@ router.get('/secrets', function (req, res, next) {
                 console.log(rows[i].username + "'s secret is: " + rows[i].secretTitle + ": " + rows[i].secret);
             }
             console.log("\n");
-            res.render('secrets', { username: req.cookies.username, secrets: rows });
+            res.render('secrets', { username: req.cookies.username, secrets: rows});
         }
     });
 });
@@ -62,14 +62,17 @@ router.post('/secrets/modifySecrets', function (req, res, next) {
 
     if (req.body.submit == "Delete this Secret") {
         console.log("User wants to delete a secret. SecretId = " + req.body.secretId);
-        for (var i = 0; i < storedSecrets.length; i++) {
-            if (storedSecrets[i].secretId == req.body.secretId) {
-                storedSecrets.splice(i, 1);
-            }
-        }
+        connection.query("DELETE FROM Secret WHERE secretId = " + connection.escape(req.body.secretId), function(err, rows, fields){
+          if(err){
+                console.log("\nSecretId " + req.body.secretId + " could not be deleted: " + err + "\n");
+            } else {
+                console.log("Successfully deleted secretId: " + req.body.secretId);
+            } 
+        });
     } else if (req.body.submit == "Keep my Secret") {
-        console.log("New Secret Recieved: " + req.body.secretTitle);
-        connection.query("INSERT INTO Secret(secretId, secretTitle, secretDescription, secretUserId) VALUES(" + connection.escape((new Date).getTime()) + ", " + connection.escape(req.body.secretTitle) + ", " + connection.escape(req.body.secret) + ", 1)", function (err, rows, fields) {
+        var newSecretId =  (new Date).getTime() + req.body.secretTitle;
+        console.log("New Secret Recieved: " + newSecretId);
+        connection.query("INSERT INTO Secret(secretId, secretTitle, secretDescription, secretUserId) VALUES(" + mysql.escape(newSecretId) + ", " + connection.escape(req.body.secretTitle) + ", " + connection.escape(req.body.secret) + ", 1)", function (err, rows, fields) {
             if(err){
                 console.log("\nNew secret could not be saved: " + err + "\n");
             } else {
