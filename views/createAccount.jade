@@ -4,8 +4,8 @@ block content
   h1= title
   p In order to store your secrets, please create an account now.
   #warning
-  if warning
-    p = warning
+  if warning.length > 0
+    p #{warning}
   form(method="POST" action="/createAccount")
     label(for="username") Username:
     input(type="text" name="username" id="username")

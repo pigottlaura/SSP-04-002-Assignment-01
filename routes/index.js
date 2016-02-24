@@ -26,7 +26,7 @@ router.get('/', function (req, res, next) {
 router.get('/createAccount', function (req, res, next) {
     if (req.session.username == null) {
         console.log("This is a new user");
-        res.render("createAccount", false);
+        res.render("createAccount", {warning: ""});
     } else {
         console.log("This is a logged in user");
         res.redirect("/");
@@ -37,7 +37,7 @@ router.post('/createAccount', function (req, res, next) {
     if (req.session.username == null && req.body.username != null) {
         console.log("Attempting to create a new user account");
         connection.query("SELECT * FROM User WHERE username = " + req.body.username, function (err, rows, fields) {
-            if (rows === undefined) {
+            if (rows != undefined && rows.length > 0) {
                 //If no results came back, then this name is available
                 connection.query("INSERT INTO User(username, userPassword) VALUES(" + connection.escape(req.body.username) + ", " + connection.escape(req.body.password) + ")", function (err, rows, fields) {
                     if (err) {
