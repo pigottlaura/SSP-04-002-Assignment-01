@@ -7,9 +7,6 @@ var sortBy;
 
 // Setting up the connection to my local mySql database (running on a WAMP server)
 var connection = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "",
     database: "mySecrets"
 });
 
