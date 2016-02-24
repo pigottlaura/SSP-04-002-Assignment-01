@@ -37,8 +37,8 @@ CREATE TABLE Secret(
     CONSTRAINT secret_pk PRIMARY KEY(secretId)
 );
 
-INSERT INTO User(username, userPassword) VALUES("Laura", "testing");
-INSERT INTO User(username, userPassword) VALUES("usernameA", "testing");
-INSERT INTO User(username, userPassword) VALUES("usernameB", "testing");
+INSERT INTO User(username, userPassword) VALUES("Laura", "password");
+INSERT INTO User(username, userPassword) VALUES("username", "password");
+INSERT INTO User(username, userPassword) VALUES("testing", "123");
 
 SELECT '<Finished mySecrets script>' AS '';
