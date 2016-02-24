@@ -1,51 +1,47 @@
 var express = require('express');
 var router = express.Router();
 var fs = require("fs");
-var mysql = require('mysql');
-
 var storedSecrets;
+var secretsDirectory = "./";
 
 // Setting up the connection to my local mySql database (running on a WAMP server)
-var connection = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "",
-    database: "mySecrets"
-});
+var connection;
 
-//connection.end();
+    //connection.end();
+
+    // Querying the database
+    connection.query("SELECT * FROM User", function (err, rows, fields) {
+        console.log("Queried all users from the database");
+        if (err) {
+            console.log("Could not process query. " + err);
+        } else {
+            console.log("Response recieved from query");
+            for (var i = 0; i < rows.length; i++) {
+                console.log("User " + i + "'s username is: " + rows[i].username);
+            }
+            console.log("\n");
+        }
+    });
 
 /* GET users listing. */
 
 router.get('/secrets', function (req, res, next) {
-    if (connection.threadId == null) {
-        // Connecting to the database
-        connection.connect(function (err) {
-            if (err) {
-                console.error("\nCould not connect to server " + err.stack + "\n");
-            } else {
-                console.log("\nSuccessfully connected to database with id " + connection.threadId + "\n");
-            }
-        });
-        
-        // Querying the database
-        connection.query("SELECT * FROM Secret WHERE secretUserId IN (SELECT userId FROM User WHERE username = 'pigottlaura')", function (err, rows, fields) {
-            console.log("Queried all users from the database");
-            if (err) {
-                console.log("Could not process query. " + err);
-            } else {
-                console.log("Response recieved from query");
-                for (var i = 0; i < rows.length; i++) {
-                    console.log("User id number " + rows[i].secretUserId + "'s secret is: " + rows[i].secretTitle);
-                }
-                console.log("\n");
-                storedSecrets = rows[i];
-            }
-        });
-    } else {
-        console.log("Already connected to database");
-    }
-    
+    // Connect to the local database
+    connection = mysql.createConnection({
+        host: "localhost",
+        user: "root",
+        password: "",
+        database: "mySecrets"
+    });
+
+    // Connecting to the database
+    connection.connect(function (err) {
+        if (err) {
+            console.error("\nCould not connect to server " + err.stack + "\n");
+        } else {
+            console.log("\nSuccessfully connected to database with id " + connection.threadId + "\n");
+        }
+    });
     res.render('secrets', { username: req.cookies.username, secrets: storedSecrets });
 });
 
