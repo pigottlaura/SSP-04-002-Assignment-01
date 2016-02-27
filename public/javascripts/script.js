@@ -1,4 +1,30 @@
 jQuery(document).ready(function($){
+    // As all cookes appear to be stored in the document as one long string,
+    // creating an array that stores all of the cookies as seperate elements.
+    // Using the core JavaScript methods .replace() to remove all spaces from 
+    // this string of data, and the .split() method to set the points at which 
+    // this string of cookies needs to be seperated i.e. after each ;
+    var allCookies = document.cookie.replace("/ /g", "").split(";");
+    
+    // Looping through the array of cookie name value pairs that I created earlier.
+    for(var i = 0; i < allCookies.length; i++){
+        // This this cookie's name starts with sortBy, then this is the cookie that
+        // will specify the current sorting order of the secrets in the database
+        if(allCookies[i].indexOf("sortBy") == 0)
+        {
+            // Getting the current value of the sortBy cookie, by using the core
+            // JavaScript method .split() to break the cookie's name=value string into
+            // two seperate parts. Opting to access the second part of this new array
+            // i.e. index 1, as this is the part that contains the value of the cookie
+            var sortBy = allCookies[i].split("=")[1];
+            
+            // Setting the current value of the sortSecretsBy select element to be equal
+            // to that of the sortBy cookie. This is so that the select element will always
+            // reflect the current sort method of the secrets, even when the page is refreshed
+            $("#sortSecretsBy").val(sortBy);
+        }
+    }
+      
     // Hiding all updateSecret forms by default, as they do not need to be
     // displayed until later (i.e. if a user clicks an editSecret button
     // within a secret)
@@ -67,6 +93,10 @@ jQuery(document).ready(function($){
         $(this).parent().siblings(".deleteSecret").show();
         // Showing the .editSecret button
         $(this).parent().siblings(".editSecret").show();
+    });
+    
+    $("#sortSecretsBy").click(function(){
+        document.cookie = "sortBy=" + $("#sortSecretsBy").val() + ";path=/";
     });
 });
         

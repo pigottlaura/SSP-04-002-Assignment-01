@@ -1,6 +1,9 @@
 var express = require('express');
 var router = express.Router();
-var mysql = require('mysql');
+
+// Requiring the database connection I have set up previously, so that it
+// can be shared between routes (i.e. so users can login in the index.js route
+// and then query their secrets in the users.js route)
 var connection = require("../database/connection");
 
 // Checking if we are already connected to the server
@@ -47,7 +50,7 @@ router.post('/createAccount', function (req, res, next) {
                     }
                     console.log("New user " + req.body.username + " successfully added");
                     req.session.username = req.body.username;
-                    res.cookie("sortByDate", "true");
+                    res.cookie("sortBy", "secretTimePosted");
                     res.redirect("/users/secrets");
                 });
             } else {
@@ -82,7 +85,7 @@ router.post('/login', function (req, res, next) {
                         if (req.body.password == rows[0].userPassword) {
                             console.log(req.body.username + " login details match a user in database - Login Authenticated");
                             req.session.username = req.body.username;
-                            res.cookie("sortByDate", "true");
+                            res.cookie("sortBy", "secretTimePosted");
                             res.redirect("/users/secrets");
                         } else {
                             console.log("Incorrect password for user " + req.body.username);

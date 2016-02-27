@@ -3,6 +3,12 @@ body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
+body > div {
+    position: relative;
+    width: 80%;
+    margin: 0 auto;
+}
+
 a {
   color: #00B7FF;
 }
@@ -34,4 +40,10 @@ a {
     display: inline-block;
     width: 35% !important;
     float: right;
+}
+
+.logout {
+    position: absolute;
+    right:0;
+    top:0;
 }

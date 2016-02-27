@@ -1,13 +1,10 @@
 var express = require('express');
 var router = express.Router();
-var fs = require("fs");
-var mysql = require('mysql');
-var connection = require("../database/connection");
 
-// Global variable to store the current sorting value required by the client
-// i.e. do they want to sort their secrets alphabetically by title or numerically
-// by date
-var sortBy;
+// Requiring the database connection I have set up previously, so that it
+// can be shared between routes (i.e. so users can login in the index.js route
+// and then query their secrets in the users.js route)
+var connection = require("../database/connection");
 
 /* GET users listing. */
 
@@ -28,11 +25,10 @@ router.get('/secrets', function (req, res, next) {
         console.log("Already connected to database");
     }
     
-    // Results will be sorted as specified by the user (on the client side)
-    // If the sorting is to be done by title, passing in one final statement to the query - use
-    // case-insensitive general latin (i.e. ignore the case of the letters when sorting)
-    sortBy = req.cookies.sortByDate == "true" ? "secretTimePosted" : "secretTitle";
-    console.log("Results will be sorted by " + sortBy);
+    // Results will be sorted as specified by the user (on the client side). This value
+    // will be passed into the ORDER BY portion of the SQL query everytime results are requested
+    // from the database (i.e. in the next piece of middleware)
+    console.log("Results will be sorted by " + req.cookies.sortBy);
     
     // Passing the request on to the next middleware, so that the database can be queried
     // and the page generated
@@ -43,7 +39,7 @@ router.get('/secrets', function (req, res, next) {
     // Querying the database. Looking for the username, decrypted secretTitle and the decrypted secretDescription
     // based on checking if the username of the user that is currently logged in (using express-session) is the
     // one who created any of the secrets in the database
-    connection.query("SELECT u.username AS 'username', AES_DECRYPT(s.secretTitle, 'encryptSecretTitle') AS 'secretTitle',  AES_DECRYPT(s.secretDescription, 'encryptSecretDescription') AS 'secret', s.secretId AS 'secretId' FROM Secret s JOIN User u ON s.secretUserId = u.userId WHERE u.username = " + connection.escape(req.session.username) + " ORDER BY AES_DECRYPT(s." + sortBy + ", 'encryptSecretTitle')", function (err, rows, fields) {
+    connection.query("SELECT u.username AS 'username', AES_DECRYPT(s.secretTitle, 'encryptSecretTitle') AS 'secretTitle',  AES_DECRYPT(s.secretDescription, 'encryptSecretDescription') AS 'secret', s.secretId AS 'secretId' FROM Secret s JOIN User u ON s.secretUserId = u.userId WHERE u.username = " + connection.escape(req.session.username) + " ORDER BY AES_DECRYPT(s." + req.cookies.sortBy + ", 'encryptSecretTitle')", function (err, rows, fields) {
         // Add in "COLLATE latin1_general_ci" to end of query, to force to sort case-insensitive.
         // Can't use currently, as it stops the date order from being sortable
         console.log("Queried " + req.session.username + "'s secrets from the database");
@@ -67,7 +63,7 @@ router.get('/secrets', function (req, res, next) {
             
             // Rendering the secrets view, using the username of the current user, and passing in the 
             // secrets of theirs which we just retrieved from the database (if any)
-            res.render('secrets', {title: "My Secrets", username: req.session.username, secrets: rows });
+            res.render('secrets', {title: "My Secrets", username: req.session.username, secrets: rows});
         }
     });
 });
@@ -88,7 +84,7 @@ router.post('/secrets/deleteSecret', function (req, res, next) {
 router.post('/secrets/addNewSecret', function (req, res, next) {
     var newSecretId = (new Date).getTime() + "-" + req.session.username;
     console.log("New Secret Recieved: " + newSecretId);
-    connection.query("INSERT INTO Secret(secretId, secretTitle, secretDescription, secretUserId) VALUES(" + mysql.escape(newSecretId) + ", AES_ENCRYPT(" + connection.escape(req.body.secretTitle) + ", 'encryptSecretTitle'), AES_ENCRYPT(" + connection.escape(req.body.secret) + ", 'encryptSecretDescription'), (SELECT userId FROM User WHERE username = " + connection.escape(req.session.username) + "))", function (err, rows, fields) {
+    connection.query("INSERT INTO Secret(secretId, secretTitle, secretDescription, secretUserId) VALUES(" + connection.escape(newSecretId) + ", AES_ENCRYPT(" + connection.escape(req.body.secretTitle) + ", 'encryptSecretTitle'), AES_ENCRYPT(" + connection.escape(req.body.secret) + ", 'encryptSecretDescription'), (SELECT userId FROM User WHERE username = " + connection.escape(req.session.username) + "))", function (err, rows, fields) {
         if (err) {
             console.log("\nNew secret could not be saved: " + err + "\n");
         } else {
