@@ -100,7 +100,6 @@ router.post('/secrets/addNewSecret', function (req, res, next) {
 
 router.post('/secrets/updateSecret', function (req, res, next) {
     console.log("Updating secret " + req.body.secretId);
-    console.log("Text = " + req.body.newSecretText);
     connection.query("UPDATE Secret SET secretDescription = AES_ENCRYPT(" + connection.escape(req.body.newSecretText) + ", 'encryptSecretDescription') WHERE secretId = " + connection.escape(req.body.secretId), function (err, rows, fields) {
         if (err) {
             console.log(req.body.secretId + " could not be updated: " + err + "\n");
