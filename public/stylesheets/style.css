@@ -47,3 +47,12 @@ a {
     right:0;
     top:0;
 }
+#sortOptions {
+    text-align:right;
+}
+#sortOptions > * {
+    display: inline-block;
+}
+#sortOptions select {
+    margin-right: 2%;
+}

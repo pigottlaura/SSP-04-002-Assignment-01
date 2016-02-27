@@ -23,15 +23,39 @@ if (connection.threadId == null) {
 /* GET home page. */
 
 router.get('/', function (req, res, next) {
-    res.render('index', {title: "Secrets", loginWarning: "", createAccountWarning: ""});
+    if (req.session.username == null){
+        res.cookie("indexTab", 0);
+        res.cookie("sortBy", "secretTimePosted");
+        res.render('index', {title: "Secrets", loginWarning: "", createAccountWarning: ""});
+    } else {
+        res.redirect("/users/secrets");
+    }
 });
+
 router.get('/createAccount', function (req, res, next) {
-    res.cookie("indexTab", 1);
-    res.render('index', {title: "Secrets", loginWarning: "", createAccountWarning: ""});
+    if (req.session.username == null){
+        res.cookie("indexTab", 1);
+        res.render('index', {title: "Secrets", loginWarning: "", createAccountWarning: ""});
+    } else {
+        res.redirect("/users/secrets");
+    }
 });
+
 router.get('/login', function (req, res, next) {
-    res.cookie("indexTab", 0);
-    res.render('index', {title: "Secrets", loginWarning: "", createAccountWarning: ""});
+    if (req.session.username == null){
+        res.cookie("indexTab", 0);
+        res.render('index', {title: "Secrets", loginWarning: "", createAccountWarning: ""});
+    } else {
+        res.redirect("/users/secrets");
+    }
+});
+
+router.post("/logout", function (req, res, next) {
+    if (req.session.username != null) {
+        req.session.destroy();
+        res.cookie("sortBy", "secretTimePosted");
+    }
+    res.redirect("/");
 });
 
 router.post('/createAccount', function (req, res, next) {
@@ -50,7 +74,6 @@ router.post('/createAccount', function (req, res, next) {
                     }
                     console.log("New user " + req.body.username + " successfully added");
                     req.session.username = req.body.username;
-                    res.cookie("sortBy", "secretTimePosted");
                     res.cookie("indexTab", 0);
                     res.redirect("/users/secrets");
                 });
@@ -89,7 +112,6 @@ router.post('/login', function (req, res, next) {
                         if (req.body.password == rows[0].userPassword) {
                             console.log(req.body.username + " login details match a user in database - Login Authenticated");
                             req.session.username = req.body.username;
-                            res.cookie("sortBy", "secretTimePosted");
                             res.redirect("/users/secrets");
                         } else {
                             console.log("Incorrect password for user " + req.body.username);
@@ -112,13 +134,6 @@ router.post('/login', function (req, res, next) {
     res.cookie("indexTab", 0);
     res.render("index", {title: "Secrets", loginWarning:"There was an unexpected issue with your login. Please try again.", createAccountWarning: ""});
 }
-});
-
-router.post("/logout", function (req, res, next) {
-    if (req.session.username != null) {
-        req.session.destroy();
-    }
-    res.redirect("/");
 });
 
 module.exports = router;
