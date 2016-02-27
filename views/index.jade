@@ -15,23 +15,26 @@ block content
         #loginWarning
         if loginWarning.length > 0
             p(class="warning") #{loginWarning}
-        form(method="POST" action="/login")
+        form(id="login" method="POST" action="/login")
             label(for="username") Username:
-            input(type="text" name="username" id="username")
+            input(type="text" name="username" id="loginUsername")
             br
             label(for="password") Password:
-            input(type="password" name="password")
+            input(type="password" name="password" id="loginPassword")
             br
-            input(type="submit" name="submit" value="Login")
+            input(type="submit" name="submit" align="right" value="Login")
     div(id="tabs-2")
         #createAccountWarning
         if createAccountWarning.length > 0
             p(class="warning") #{createAccountWarning}
-        form(method="POST" action="/createAccount")
+        form(id="createAccount" method="POST" action="/createAccount")
             label(for="username") Username:
-            input(type="text" name="username" id="username")
+            input(type="text" name="username" id="createUsername")
             br
             label(for="password") Password:
-            input(type="password" name="password")
+            input(type="password" name="password" id="createPassword")
+            br
+            label(for="confirmPassword") Confirm Password:
+            input(type="password" name="confirmPassword" id="createConfirmPassword")
             br
             input(type="submit" name="submit" value="Create")

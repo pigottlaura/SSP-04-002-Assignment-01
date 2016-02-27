@@ -56,3 +56,22 @@ a {
 #sortOptions select {
     margin-right: 2%;
 }
+form {
+    position: relative;
+    overflow: auto;
+}
+form > * {
+    display: inline-block;
+}
+form input {
+    width: 60%;
+}
+form label {
+    width: 38%;
+    margin-bottom: 4%;
+}
+form input[type="submit"]{
+    float: right;
+    margin-top: 2%;
+    width: 20%;
+}

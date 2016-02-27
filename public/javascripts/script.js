@@ -18,7 +18,74 @@ $(document).ready(function($){
         active: false
     });
     
+    // Using JQuery UI to generate the tab interface of the login / create account
+    // sections on the home page of the website.
     $("#tabs").tabs();
+    
+    // Checking if the password and the confirmed password match before allowing a request for creating
+    // a new account to be sent i.e. to ensure that the user does not make a mistake in their password
+    
+    // Validating the login form before it can be sent
+    $("#login").submit(function(){
+        // Defaulting the return result to false i.e. the form will not be allowed to be submitted
+        // unless the below criteria are met
+        var allowSubmit = false;
+        
+        // Removing any current warnings from the login tab
+        $(this).siblings("p.warning").remove();
+        
+        // Checking if there has been text added to both the username and password inputs i.e.
+        // you cannot login to an account without a username AND a password
+        if($("#loginUsername").val().length > 0 && $("#loginPassword").val().length > 0){
+            allowSubmit = true;
+        } else {
+            $("<p class='warning'>You need to enter a username and a password to login to your account.</p>").insertBefore(this);
+        }
+        return allowSubmit;
+    });
+    
+    // Validating the createAccount form before it can be sent
+    $("#createAccount").submit(function() {
+        // Defaulting the return result to false i.e. the form will not be allowed to be submitted
+        // unless the below criteria are met
+        var allowSubmit = false;
+        
+        // Removing any current warnings from the create account tab
+        $(this).siblings("p.warning").remove();
+        
+        // Checking if there has been text added to both the username and password inputs i.e.
+        // you cannot create an account without a username AND a password
+        if($("#createUsername").val().length > 0 && $("#createPassword").val().length > 0){
+            
+            // Checking if the two password fields match i.e. that a user has correctly entered
+            // their password twice
+            if($("#createPassword").val() == $("#createConfirmPassword").val()){
+                
+                // If all of the above has resulted as true (i.e. there is a username and password
+                // provided and the confirm password input matches the original password input)
+                // setting the return value to true (i.e. this form is ok to submit)
+                allowSubmit = true;
+            } else{
+                
+                // Adding a warning message to notify the user that these passwords do not match.
+                // As the return value was defaulted to false, this form will not be allowed 
+                // to submit until the user rectifies this issue
+                $("<p class='warning'>These passwords do not match. Please try again.</p>").insertBefore(this);
+            }
+        } else {
+            
+            // The user has not entered data into both the username AND password input boxes. Notifying
+            // them that they need to enter both in order to create an account. As the return value was
+            // defaulted to false, this form will not be allowed to submit until the user rectifies this 
+            // issue
+            $("<p class='warning'>You need to enter a username and a password to create a new account.</p>").insertBefore(this);
+        }
+        
+        // Returning a boolean value, which if true will allow the form to be submitted, and if false
+        // will stop the form from being submitted. If false, relevant warnings etc have been added above
+        // so that the user know's why the form didn't submit.
+        return allowSubmit;
+    });
     
     // As all cookes appear to be stored in the document as one long string,
     // creating an array that stores all of the cookies as seperate elements.
@@ -45,7 +112,6 @@ $(document).ready(function($){
             $("#sortSecretsBy").val(sortBy);
         } else if (allCookies[i].indexOf("indexTab") == 0){
             var openTab = allCookies[i].split("=")[1];
-            console.log("opening tab " + openTab);
             $("#tabs").tabs("option","active", openTab);
         }
     }
