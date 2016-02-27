@@ -2,19 +2,36 @@ extends layout
 
 block content
   h2 Welcome to #{title}
-  p
-    | In order to access your secrets, please log in using your credentials below or
-    #warning
-    if warning.length > 0
-        p(class="warning") #{warning}
-    | you can create a new account 
-    a(href='/createAccount') here
-
-  form(method="POST" action="/login")
-    label(for="username") Username:
-    input(type="text" name="username" id="username")
-    br
-    label(for="password") Password:
-    input(type="password" name="password")
-    br
-    input(type="submit" name="submit" value="Login")
+  p In order to access your secrets, please log in using your credentials below or create a new account
+  
+  div(id="tabs")
+    ul
+        li
+            a(href="#tabs-1") Login
+        li
+            a(href="#tabs-2") Create Account
+        
+    div(id="tabs-1")
+        #loginWarning
+        if loginWarning.length > 0
+            p(class="warning") #{loginWarning}
+        form(method="POST" action="/login")
+            label(for="username") Username:
+            input(type="text" name="username" id="username")
+            br
+            label(for="password") Password:
+            input(type="password" name="password")
+            br
+            input(type="submit" name="submit" value="Login")
+    div(id="tabs-2")
+        #createAccountWarning
+        if createAccountWarning.length > 0
+            p(class="warning") #{createAccountWarning}
+        form(method="POST" action="/createAccount")
+            label(for="username") Username:
+            input(type="text" name="username" id="username")
+            br
+            label(for="password") Password:
+            input(type="password" name="password")
+            br
+            input(type="submit" name="submit" value="Create")

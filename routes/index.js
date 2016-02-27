@@ -23,25 +23,25 @@ if (connection.threadId == null) {
 /* GET home page. */
 
 router.get('/', function (req, res, next) {
-    res.render('index', {title: "Secrets", warning: "" });
+    res.render('index', {title: "Secrets", loginWarning: "", createAccountWarning: ""});
 });
-
 router.get('/createAccount', function (req, res, next) {
-    if (req.session.username == null) {
-        console.log("This is a new user");
-        res.render("createAccount", {title: "Create Account", warning: "" });
-    } else {
-        console.log("This is a logged in user");
-        res.redirect("/");
-    }
+    res.cookie("indexTab", 1);
+    res.render('index', {title: "Secrets", loginWarning: "", createAccountWarning: ""});
+});
+router.get('/login', function (req, res, next) {
+    res.cookie("indexTab", 0);
+    res.render('index', {title: "Secrets", loginWarning: "", createAccountWarning: ""});
 });
 
 router.post('/createAccount', function (req, res, next) {
-    if (req.session.username == null && req.body.username != null) {
+    if (req.session.username == null && req.body.username.length > 0 && req.body.password.length > 0) {
         console.log("Attempting to create a new user account");
         connection.query("SELECT * FROM User WHERE username = " + connection.escape(req.body.username), function (err, rows, fields) {
             if (err) {
                 console.log("Unable to query database to check if this username exists " + err);
+                res.cookie("indexTab", 1);
+                res.render("index", {title: "Secrets", loginWarning: "", createAccountWarning: "There was an unexpected err. Please try again." });
             } else if (rows.length == 0) {
                 //If no results came back, then this name is available
                 connection.query("INSERT INTO User(username, userPassword) VALUES(" + connection.escape(req.body.username) + ", AES_ENCRYPT(" + connection.escape(req.body.password) + ", 'HashMyPassword'))", function (err, rows, fields) {
@@ -51,16 +51,19 @@ router.post('/createAccount', function (req, res, next) {
                     console.log("New user " + req.body.username + " successfully added");
                     req.session.username = req.body.username;
                     res.cookie("sortBy", "secretTimePosted");
+                    res.cookie("indexTab", 0);
                     res.redirect("/users/secrets");
                 });
             } else {
                 //This username is already taken
                 console.log("Cannot create new user " + req.body.username + ". This username is already taken");
-                res.render("createAccount", { warning: "This username " + req.body.username + " is already taken." });
+                res.cookie("indexTab", 1);
+                res.render("index", {title: "Secrets", loginWarning: "", createAccountWarning: "The username " + req.body.username + " is already taken." });
             }
         });
     } else {
-        res.redirect("/");
+        res.cookie("indexTab", 1);
+        res.render("index", {title: "Secrets", loginWarning: "", createAccountWarning: "Please enter a valid username and password." });
     }
 });
 
@@ -70,7 +73,8 @@ router.post('/login', function (req, res, next) {
         connection.query("SELECT AES_DECRYPT(userPassword,'HashMyPassword') AS 'userPassword' FROM User WHERE username = " + connection.escape(currentUsername), function (err, rows, fields) {
             if (err) {
                 console.log("Unable query the database to see if " + currentUsername + " exists " + err);
-                next();
+                res.cookie("indexTab", 0);
+                res.render("index", {title: "Secrets", loginWarning:"There was an unexpected issue with your login. Please try again.", createAccountWarning: ""});
             } else {
                 console.log("Successfully queried the database to see if " + currentUsername + " exists ");
                 // Checking if any rows were returned from the query (i.e. does the username
@@ -89,7 +93,8 @@ router.post('/login', function (req, res, next) {
                             res.redirect("/users/secrets");
                         } else {
                             console.log("Incorrect password for user " + req.body.username);
-                            res.render("index", {title: "Secrets", warning: "Incorrect password. Please try again."});
+                            res.cookie("indexTab", 0);
+                            res.render("index", {title: "Secrets", loginWarning: "Incorrect password for " + req.body.username + ". Please try again.", createAccountWarning: ""});
                         }
                     }
                 } else if (req.session.username != null) {
@@ -97,20 +102,16 @@ router.post('/login', function (req, res, next) {
                     res.redirect("/users/secrets");
                 } else {
                     console.log(req.body.username + " is not a registered username");
-                    res.render("index", {title: "Secrets", warning: req.body.username + " is not a registered username."});
+                    res.cookie("indexTab", 0);
+                    res.render("index", {title: "Secrets", loginWarning: req.body.username + " is not a registered username.", createAccountWarning: ""});
                 }
             }
         });
     } else {
     console.log("There is no request username, or session username, to compare to the database");
-    next();
+    res.cookie("indexTab", 0);
+    res.render("index", {title: "Secrets", loginWarning:"There was an unexpected issue with your login. Please try again.", createAccountWarning: ""});
 }
-});
-
-router.post('/login', function (req, res, next) {
-    var err = new Error('Wrong Username or Password');
-    err.status = 401;
-    res.render("loginError", {title: "Secrets", message: "Wrong Username or Password", error: err });
 });
 
 router.post("/logout", function (req, res, next) {
