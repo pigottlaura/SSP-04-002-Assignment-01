@@ -21,3 +21,17 @@ a {
     bottom 0;
     left 0;
 }
+
+.updateSecret {
+    margin: 1% 0 3% 0;
+}
+.updateSecret input {
+    width: 100%;
+    margin: 3% 0;
+}
+
+.button, button input {
+    display: inline-block;
+    width: 35% !important;
+    float: right;
+}
