@@ -28,9 +28,9 @@ CREATE TABLE User(
 
 SELECT '<Creating Table Secret>' AS '';
 CREATE TABLE Secret(
-	secretId VARCHAR(20) NOT NULL,
-    secretTitle VARBINARY(100) NOT NULL,
-    secretDescription VARBINARY(400),
+	secretId VARCHAR(40) NOT NULL,
+    secretTitle VARBINARY(400) NOT NULL,
+    secretDescription VARBINARY(1024),
     secretUserId INT(11) NOT NULL,
     secretTimePosted TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     CONSTRAINT secret_userId FOREIGN KEY(secretUserId) REFERENCES User(userId),
