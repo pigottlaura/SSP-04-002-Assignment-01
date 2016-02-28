@@ -20,7 +20,7 @@ SELECT '<Creating Table User>' AS '';
 CREATE TABLE User(
 	userId INT(11) AUTO_INCREMENT,
     username VARCHAR(45) NOT NULL,
-	userPassword VARCHAR(45) NOT NULL,
+	userPassword VARBINARY(400) NOT NULL,
 	userJoinedTimeStamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     CONSTRAINT userUsername_unique UNIQUE(username),
 	CONSTRAINT user_pk PRIMARY KEY(userId)
