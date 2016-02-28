@@ -97,6 +97,7 @@ select, input[type="submit"], button, input.button {
     position: absolute;
     right:0;
     top:0;
+    margin: 2%;
 }
 #logout input , #sort input, .deleteSecret input {
     width: 100% !important;

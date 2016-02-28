@@ -6,27 +6,28 @@ var router = express.Router();
 // and then query their secrets in the users.js route)
 var connection = require("../database/connection");
 
+// Checking if we are already connected to the server
+if (connection.threadId == null) {
+    // Connecting to the database
+    connection.connect(function (err) {
+        if (err) {
+            res.send(err + err.stack);
+            console.error("\nCould not connect to server " + err.stack + "\n");
+        } else {
+            console.log("Successfully connected to database");
+        }
+    });
+} else {
+    console.log("Already connected to database");
+}
+
 /* GET home page. */
 
 router.get('/', function (req, res, next) {
-    // Checking if we are already connected to the server
-    if (connection.threadId == null) {
-        // Connecting to the database
-        connection.connect(function (err) {
-            if (err) {
-                res.send(err + err.stack);
-                console.error("\nCould not connect to server " + err.stack + "\n");
-            } else {
-                console.log("Successfully connected to database");
-            }
-        });
-    } else {
-        console.log("Already connected to database");
-    }
     if (req.session.username == null) {
         res.cookie("indexTab", 0);
         res.cookie("sortBy", "secretTimePosted");
-        res.render('index', { error: "", title: "Login", loginWarning: "", createAccountWarning: "" });
+        res.render('index', {title: "Login", loginWarning: "", createAccountWarning: "" });
     } else {
         res.redirect("/users/secrets");
     }
@@ -35,7 +36,7 @@ router.get('/', function (req, res, next) {
 router.get('/createAccount', function (req, res, next) {
     if (req.session.username == null) {
         res.cookie("indexTab", 1);
-        res.render('index', { error: "", title: "Create Account", loginWarning: "", createAccountWarning: "" });
+        res.render('index', {title: "Create Account", loginWarning: "", createAccountWarning: "" });
     } else {
         res.redirect("/users/secrets");
     }
@@ -44,7 +45,7 @@ router.get('/createAccount', function (req, res, next) {
 router.get('/login', function (req, res, next) {
     if (req.session.username == null) {
         res.cookie("indexTab", 0);
-        res.render('index', { error: "", title: "Login", loginWarning: "", createAccountWarning: "" });
+        res.render('index', {title: "Login", loginWarning: "", createAccountWarning: "" });
     } else {
         res.redirect("/users/secrets");
     }
@@ -65,7 +66,7 @@ router.post('/createAccount', function (req, res, next) {
             if (err) {
                 console.log("Unable to query database to check if this username exists " + err);
                 res.cookie("indexTab", 1);
-                res.render("index", { error: err, title: "Create Account", loginWarning: "", createAccountWarning: "There was an unexpected err. Please try again." });
+                res.render("index", {title: "Create Account", loginWarning: "", createAccountWarning: "There was an unexpected err. Please try again." });
             } else if (rows.length == 0) {
                 //If no results came back, then this name is available
                 connection.query("INSERT INTO User(username, userPassword) VALUES(" + connection.escape(req.body.username) + ", AES_ENCRYPT(" + connection.escape(req.body.password) + ", 'HashMyPassword'))", function (err, rows, fields) {
@@ -81,12 +82,12 @@ router.post('/createAccount', function (req, res, next) {
                 //This username is already taken
                 console.log("Cannot create new user " + req.body.username + ". This username is already taken");
                 res.cookie("indexTab", 1);
-                res.render("index", { error: err, title: "Create Account", loginWarning: "", createAccountWarning: "The username " + req.body.username + " is already taken." });
+                res.render("index", {title: "Create Account", loginWarning: "", createAccountWarning: "The username " + req.body.username + " is already taken." });
             }
         });
     } else {
         res.cookie("indexTab", 1);
-        res.render("index", { error: err, title: "Create Account", loginWarning: "", createAccountWarning: "Please enter a valid username and password." });
+        res.render("index", {title: "Create Account", loginWarning: "", createAccountWarning: "Please enter a valid username and password." });
     }
 });
 
@@ -97,7 +98,7 @@ router.post('/login', function (req, res, next) {
             if (err) {
                 console.log("Unable query the database to see if " + currentUsername + " exists " + err);
                 res.cookie("indexTab", 0);
-                res.render("index", { error: err, title: "Login", loginWarning: "There was an unexpected issue with your login. Please try again.", createAccountWarning: "" });
+                res.render("index", {title: "Login", loginWarning: "There was an unexpected issue with your login. Please try again.", createAccountWarning: "" });
             } else {
                 console.log("Successfully queried the database to see if " + currentUsername + " exists ");
                 // Checking if any rows were returned from the query (i.e. does the username
@@ -116,7 +117,7 @@ router.post('/login', function (req, res, next) {
                         } else {
                             console.log("Incorrect password for user " + req.body.username);
                             res.cookie("indexTab", 0);
-                            res.render("index", { error: err, title: "Login", loginWarning: "Incorrect password for " + req.body.username + ". Please try again.", createAccountWarning: "" });
+                            res.render("index", {title: "Login", loginWarning: "Incorrect password for " + req.body.username + ". Please try again.", createAccountWarning: "" });
                         }
                     }
                 } else if (req.session.username != null) {
@@ -125,14 +126,14 @@ router.post('/login', function (req, res, next) {
                 } else {
                     console.log(req.body.username + " is not a registered username");
                     res.cookie("indexTab", 0);
-                    res.render("index", { error: err, title: "Login", loginWarning: req.body.username + " is not a registered username.", createAccountWarning: "" });
+                    res.render("index", {title: "Login", loginWarning: req.body.username + " is not a registered username.", createAccountWarning: "" });
                 }
             }
         });
     } else {
         console.log("There is no request username, or session username, to compare to the database");
         res.cookie("indexTab", 0);
-        res.render("index", { error: err, title: "Login", loginWarning: "There was an unexpected issue with your login. Please try again.", createAccountWarning: "" });
+        res.render("index", {title: "Login", loginWarning: "There was an unexpected issue with your login. Please try again.", createAccountWarning: "" });
     }
 });
 
