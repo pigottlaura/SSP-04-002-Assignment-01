@@ -152,6 +152,7 @@ $(document).ready(function($){
         // that it currently hidden
         var originalSecretValue = $(this).parent().siblings(".secretText").text();
         
+        
         // Hiding the .updateSecret form
         $(this).parent().hide();
         // Resetting the value of the .updateSecret form's input "newSecretText"

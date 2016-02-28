@@ -3,12 +3,17 @@ body {
     padding: 0;
     margin: 0;
     font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    background: #000000 url("../images/backgroundNotebook.jpg") no-repeat fixed center;
+    background-size: cover;
 }
 
 #container {
     position: relative;
     width: 80%;
+    height: 100vh;
+    padding: 2%;
     margin: 0 auto 20% auto;
+    background:rgba(255,255,255,0.5);
 }
 
 a {
@@ -37,7 +42,7 @@ a {
     margin: 1% 0 3% 0;
 }
 .updateSecret input {
-    width: 100%;
+    width: 99%;
     margin: 3% 0;
 }
 
@@ -82,11 +87,11 @@ form input[type="submit"]{
     right:0;
     top:0;
 }
-#logout input , #sort input{
-    width: 100%;
-    margin-bottom: 0;
+#logout input , #sort input, .deleteSecret input {
+    width: 100% !important;
 }
-#sortSecretsBy, #sort {
+#sortSecretsBy, #sort, button, #logout input , #sort input, .updateSecret input, .deleteSecret input {
+    margin: 0 !important;
     vertical-align: text-bottom;
 }
 
@@ -99,9 +104,13 @@ form input[type="submit"]{
     padding: 4%;
 }
 
-#addNew, #footer, input[type="submit"], #errorStack {
+.marginAbove {
+    margin-top: 2%;
+}
+
+#addNew, #footer, input[type="submit"], #errorStack, button, input.button {
     border: 1px solid #d3d3d3;
-    background: #e6e6e6 url("http://code.jquery.com/ui/1.11.4/themes/smoothness/images/ui-bg_glass_75_e6e6e6_1x400.png") 50% 50% repeat-x;
+    background: #cccccc url("http://code.jquery.com/ui/1.11.4/themes/smoothness/images/ui-bg_glass_75_e6e6e6_1x400.png") 50% 50% repeat-x;
 }
 
 pre {
@@ -114,4 +123,10 @@ pre {
 
 #addNew h3{
     margin-top: 0;
+}
+
+.group h3 {
+    background: #000000 url("../images/wood.jpg") no-repeat;
+    background-size: cover;
+    color: #FFFFFF;
 }
