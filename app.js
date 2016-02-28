@@ -44,7 +44,7 @@ app.use('/users', users);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
-    var err = new Error('Not Found');
+    var err = new Error('Sorry :( We could not find what you were looking for.)');
     err.status = 404;
     next(err);
 });
@@ -56,10 +56,7 @@ app.use(function (req, res, next) {
 if (app.get('env') === 'development') {
     app.use(function (err, req, res, next) {
         res.status(err.status || 500);
-        res.render('error', {
-            message: err.message,
-            error: err
-        });
+        res.render('error', {title: "Error "+ err.status, message: err.message, error: err});
     });
 }
 

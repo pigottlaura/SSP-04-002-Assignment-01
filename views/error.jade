@@ -1,7 +1,8 @@
 extends layout
 
 block content
-  h2= message
-  h3= error.status
-  a(href="/") Click Here to try again
-  pre #{error.stack}
+  h2 Error #{error.status}
+  h3= message
+  a(href="/") Click here to return to the homepage
+  div(id="errorStack")
+    pre #{error.stack}

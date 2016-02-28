@@ -8,7 +8,7 @@ body {
 #container {
     position: relative;
     width: 80%;
-    margin: 0 auto;
+    margin: 0 auto 20% auto;
 }
 
 a {
@@ -99,9 +99,17 @@ form input[type="submit"]{
     padding: 4%;
 }
 
-#addNew, #footer, input[type="submit"] {
+#addNew, #footer, input[type="submit"], #errorStack {
     border: 1px solid #d3d3d3;
     background: #e6e6e6 url("http://code.jquery.com/ui/1.11.4/themes/smoothness/images/ui-bg_glass_75_e6e6e6_1x400.png") 50% 50% repeat-x;
+}
+
+pre {
+    white-space: pre-wrap;       /* CSS 3 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+    white-space: -pre-wrap;      /* Opera 4-6 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
 }
 
 #addNew h3{
