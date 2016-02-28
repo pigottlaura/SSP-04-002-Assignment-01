@@ -9,6 +9,20 @@ var connectionString = process.env.MYSQLCONNSTR_mySecrets || "mysql://root:@loca
 // or live on Azure, depending on where my application is being run from)
 var connection = mysql.createConnection(connectionString);
 
+// Checking if we are already connected to the server
+if (connection.threadId == null) {
+    // Connecting to the database
+    connection.connect(function (err) {
+        if (err) {
+            console.error("\nCould not connect to server " + err.stack + "\n");
+        } else {
+            console.log("Successfully connected to database");
+        }
+    });
+} else {
+    console.log("Already connected to database");
+}
+
 //connection.end();
 
 module.exports = connection;

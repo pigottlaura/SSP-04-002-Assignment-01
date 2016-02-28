@@ -6,20 +6,6 @@ var router = express.Router();
 // and then query their secrets in the users.js route)
 var connection = require("../database/connection");
 
-// Checking if we are already connected to the server
-if (connection.threadId == null) {
-    // Connecting to the database
-    connection.connect(function (err) {
-        if (err) {
-            console.error("\nCould not connect to server " + err.stack + "\n");
-        } else {
-            console.log("Successfully connected to database");
-        }
-    });
-} else {
-    console.log("Already connected to database");
-}
-
 /* GET home page. */
 
 router.get('/', function (req, res, next) {
