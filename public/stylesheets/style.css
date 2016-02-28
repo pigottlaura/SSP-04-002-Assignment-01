@@ -1,16 +1,19 @@
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    position: relative;
+    padding: 0;
+    margin: 0;
+    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
-body > div {
+#container {
     position: relative;
     width: 80%;
     margin: 0 auto;
 }
 
 a {
-  color: #00B7FF;
+  color: #000000;
+  text-decoration: none;
 }
 
 .secret span {
@@ -22,10 +25,12 @@ a {
 }
 #footer {
     width: 100%;
+    padding: 4% 0;
     text-align: center;
+    margin-top: 2%;
     position: fixed;
-    bottom 0;
-    left 0;
+    bottom: 0;
+    left: 0;
 }
 
 .updateSecret {
@@ -42,11 +47,6 @@ a {
     float: right;
 }
 
-.logout {
-    position: absolute;
-    right:0;
-    top:0;
-}
 #sortOptions {
     text-align:right;
 }
@@ -73,5 +73,37 @@ form label {
 form input[type="submit"]{
     float: right;
     margin-top: 2%;
+    width: 30%;
+}
+
+#logout {
     width: 20%;
+    position: absolute;
+    right:0;
+    top:0;
+}
+#logout input , #sort input{
+    width: 100%;
+    margin-bottom: 0;
+}
+#sortSecretsBy, #sort {
+    vertical-align: text-bottom;
+}
+
+#sortOptions {
+    margin-bottom: 2%;
+}
+
+#addNew {
+    margin-top: 8%;
+    padding: 4%;
+}
+
+#addNew, #footer, input[type="submit"] {
+    border: 1px solid #d3d3d3;
+    background: #e6e6e6 url("http://code.jquery.com/ui/1.11.4/themes/smoothness/images/ui-bg_glass_75_e6e6e6_1x400.png") 50% 50% repeat-x;
+}
+
+#addNew h3{
+    margin-top: 0;
 }
