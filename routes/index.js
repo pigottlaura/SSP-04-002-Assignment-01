@@ -11,6 +11,7 @@ if (connection.threadId == null) {
     // Connecting to the database
     connection.connect(function (err) {
         if (err) {
+            res.send(err + err.stack);
             console.error("\nCould not connect to server " + err.stack + "\n");
         } else {
             console.log("Successfully connected to database");
