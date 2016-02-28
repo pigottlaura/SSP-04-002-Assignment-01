@@ -5,6 +5,9 @@ var mysql = require('mysql');
 // MySQL database on Azure, when my application has been deployed live to Azure
 var connectionString = process.env.MYSQLCONNSTR_mySecrets || "mysql://root:@localhost/mySecrets";
 
+// Logging out the value of the connection string
+console.log(connectionString);
+
 // Setting up the connection to my MySQL database (running on a WAMP server locally,
 // or live on Azure, depending on where my application is being run from)
 var connection = mysql.createConnection(connectionString);
