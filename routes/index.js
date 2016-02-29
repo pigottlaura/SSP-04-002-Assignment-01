@@ -102,7 +102,7 @@ router.post("/logout", function (req, res, next) {
     
     // Rendering the homepage view, with a title of login and no warnings, so that
     // the user can create a new account
-    res.render('index', {title: "Create Account", loginWarning: "You have successfully logged out.", createAccountWarning: "" });
+    res.render('index', {title: "Create Account", loginWarning: "You have successfully logged out. Please close this tab to ensure noone else can access your secrets while you're away.", createAccountWarning: "" });
 });
 
 // All requests to post to create a new account will be handled by this router

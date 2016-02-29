@@ -25,6 +25,7 @@ Assignment-01 for the Server Side Programming module, as part of the Creative Mu
     - It is not possible to access the /users/secrets page unless the user is logged in
     - User passwords are encrypted in the database
     - All secret titles and descriptions are encrypted in the database
+    - The encryption keys for the database are stored as environment variables on Azure (and locally for testing), so that they are not accessible publicly
 - Azure
     - This web application is running live on Azure
     - The MySQL database is also running live on Azure
