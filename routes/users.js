@@ -37,7 +37,7 @@ router.get('/secrets', function (req, res, next) {
 
 router.get('/secrets', function (req, res, next) {
     
-    var sortBy = req.cookies.sortBy == "secretTitle" ? "CONVERT(AES_DECRYPT(s.secretTitle, 'encryptSecretTitle'), CHAR), AES_DECRYPT(s.secretTitle, 'encryptSecretTitle') " : "secretTimePosted";
+    var sortBy = req.cookies.sortBy == "secretTitle" ? " LOWER(CONVERT(AES_DECRYPT(s.secretTitle, 'encryptSecretTitle'), CHAR)), AES_DECRYPT(s.secretTitle, 'encryptSecretTitle')" : "secretTimePosted";
     // Querying the database. Looking for the username, decrypted secretTitle and the decrypted secretDescription
     // based on checking if the username of the user that is currently logged in (using express-session) is the
     // one who created any of the secrets in the database
