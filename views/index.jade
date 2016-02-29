@@ -16,10 +16,10 @@ block content
             p(class="warning") #{loginWarning}
         form(id="login" method="POST" action="/login")
             label(for="username") Username:
-            input(type="text" name="username" id="loginUsername")
+            input(type="text" name="username" id="loginUsername" maxlength="45")
             br
             label(for="password") Password:
-            input(type="password" name="password" id="loginPassword")
+            input(type="password" name="password" id="loginPassword" maxlength="100")
             br
             input(type="submit" name="submit" align="right" value="Login")
     div(id="tabs-2")
@@ -28,12 +28,12 @@ block content
             p(class="warning") #{createAccountWarning}
         form(id="createAccount" method="POST" action="/createAccount")
             label(for="username") Username:
-            input(type="text" name="username" id="createUsername")
+            input(type="text" name="username" id="createUsername" maxlength="45")
             br
             label(for="password") Password:
-            input(type="password" name="password" id="createPassword")
+            input(type="password" name="password" id="createPassword" maxlength="100")
             br
             label(for="confirmPassword") Confirm Password:
-            input(type="password" name="confirmPassword" id="createConfirmPassword")
+            input(type="password" name="confirmPassword" id="createConfirmPassword" maxlength="100")
             br
             input(type="submit" name="submit" value="Create")

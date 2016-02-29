@@ -39,8 +39,12 @@ $(document).ready(function($){
         if($("#loginUsername").val().length > 0 && $("#loginPassword").val().length > 0){
             allowSubmit = true;
         } else {
+            // Generating a warning on the form for the user
             $("<p class='warning'>You need to enter a username and a password to login to your account.</p>").insertBefore(this);
         }
+        // Returning a boolean value, which if true will allow the form to be submitted, and if false
+        // will stop the form from being submitted. If false, relevant warnings etc have been added above
+        // so that the user know's why the form didn't submit.
         return allowSubmit;
     });
     
@@ -168,8 +172,19 @@ $(document).ready(function($){
         $(this).parent().siblings(".editSecret").show();
     });
     
-    $("#sortSecretsBy").click(function(){
+    // Setting up a listener so that when a user submits a request to sort their secrets,
+    // the sortBy cookie can be updated with the relevant value i.e. sort by secretTitle
+    // or sort by secretDescription, so that this preference can be passed to the server
+    $("#sort").submit(function(){
+        // Setting the document cookie "sortBy" to be equal to the current value of the 
+        // sort secrets by option. Appending a path of "/" to it, as otherwise it
+        // would default to "/users/secrets" as this is the page it would be on when this
+        // function is called. If the path variable is different to the original cookie,
+        // then this would be considered a new cookie
         document.cookie = "sortBy=" + $("#sortSecretsBy").val() + ";path=/";
+        
+        // Once the cookie has been updated, returning true so that the form can now be submitted
+        return true;
     });
 });
         
