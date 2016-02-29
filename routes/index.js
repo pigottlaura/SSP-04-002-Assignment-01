@@ -140,7 +140,7 @@ router.post('/createAccount', function (req, res, next) {
                 // "" around the value of the user submitted data (as requested by the API of the mysql module).
                 // Encrypting the value of the password column, so that even if the database were to be comprimised,
                 // this data would be secured.
-                connection.query("INSERT INTO User(username, userPassword) VALUES(" + connection.escape(req.body.username) + ", AES_ENCRYPT(" + connection.escape(req.body.password) + ", 'HashMyPassword'))", function (err, rows, fields) {
+                connection.query("INSERT INTO User(username, userPassword) VALUES(" + connection.escape(req.body.username) + ", AES_ENCRYPT(" + connection.escape(req.body.password) + ", " + connection.escape(process.env.PasswordKey) + "))", function (err, rows, fields) {
                     
                     // Checking if there were any errors with this query
                     if (err) {
@@ -212,7 +212,7 @@ router.post('/login', function (req, res, next) {
         
         // Querying the database to confirm that this username does infact belong to a registered user.
         // If it does, returning the 
-        connection.query("SELECT AES_DECRYPT(userPassword,'HashMyPassword') AS 'userPassword' FROM User WHERE username = " + connection.escape(currentUsername), function (err, rows, fields) {
+        connection.query("SELECT AES_DECRYPT(userPassword, " + connection.escape(process.env.PasswordKey) + ") AS 'userPassword' FROM User WHERE username = " + connection.escape(currentUsername), function (err, rows, fields) {
             if (err) {
                 console.log("Unable query the database to see if " + currentUsername + " exists " + err);
                 res.cookie("indexTab", 0);
