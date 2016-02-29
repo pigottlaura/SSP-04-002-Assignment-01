@@ -36,10 +36,12 @@ router.get('/secrets', function (req, res, next) {
 });
 
 router.get('/secrets', function (req, res, next) {
+    
+    var sortBy = req.cookies.sortBy == "secretTitle" ? "CONVERT(AES_DECRYPT(s.secretTitle, 'encryptSecretTitle'), CHAR), AES_DECRYPT(s.secretTitle, 'encryptSecretTitle') " : "secretTimePosted";
     // Querying the database. Looking for the username, decrypted secretTitle and the decrypted secretDescription
     // based on checking if the username of the user that is currently logged in (using express-session) is the
     // one who created any of the secrets in the database
-    connection.query("SELECT u.username AS 'username', AES_DECRYPT(s.secretTitle, 'encryptSecretTitle') AS 'secretTitle',  AES_DECRYPT(s.secretDescription, 'encryptSecretDescription') AS 'secret', s.secretId AS 'secretId' FROM Secret s JOIN User u ON s.secretUserId = u.userId WHERE u.username = " + connection.escape(req.session.username) + " ORDER BY AES_DECRYPT(s." + req.cookies.sortBy + ", 'encryptSecretTitle')", function (err, rows, fields) {
+    connection.query("SELECT u.username AS 'username', AES_DECRYPT(s.secretTitle, 'encryptSecretTitle') AS 'secretTitle',  AES_DECRYPT(s.secretDescription, 'encryptSecretDescription') AS 'secret', s.secretId AS 'secretId' FROM Secret s JOIN User u ON s.secretUserId = u.userId WHERE u.username = " + connection.escape(req.session.username) + " ORDER BY " + sortBy, function (err, rows, fields) {
         // Add in "COLLATE latin1_general_ci" to end of query, to force to sort case-insensitive.
         // Can't use currently, as it stops the date order from being sortable
         console.log("Queried " + req.session.username + "'s secrets from the database");
