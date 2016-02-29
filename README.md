@@ -4,7 +4,7 @@ Assignment-01 for the Server Side Programming module, as part of the Creative Mu
 
 - App structure
     - Created using express-generator
-    - Some functionality (such as accordion menus etc) has been added using JQuery and JQuery, sourced through a CDN so as to reduce server load
+    - Some functionality (such as accordion menus etc) has been added using JQuery and JQuery UI, sourced through a CDN so as to reduce server load
 - Anyone that visits the app can
     - Create a new account (using a unique username)
     - Login to their account
