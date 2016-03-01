@@ -36,7 +36,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 // throughout the website to ensure only logged in users can see secrets - and
 // that they can only see their own secrets)
 app.use("/", session({
-    secret: 'mySecretsApp',
+    // Accessing the hash key for the session' secret from environment variable 
+    // I have set up locally and on Azure, so as to ensure that the data cannot 
+    // be comprimised.
+    secret: process.env.SessionKey,
+    // Setting resave to false
     resave: false,
     // Not saving unitinialised sessions i.e. not saving them until they have had
     // a username property added to them, otherwise they have not yet been verified

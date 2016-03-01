@@ -145,7 +145,8 @@ router.post('/createAccount', function (req, res, next) {
                 // specified in the request body. Using the escape() method of the connection object to add
                 // "" around the value of the user submitted data (as requested by the API of the mysql module).
                 // Encrypting the value of the password column, so that even if the database were to be comprimised,
-                // this data would be secured.
+                // this data would be secured. Accessing the encryption keys for each column from environment variable
+                // I have set up locally and on Azure, so as to ensure that the data cannot be comprimised.
                 connection.query("INSERT INTO User(username, userPassword) VALUES(" + connection.escape(req.body.username) + ", AES_ENCRYPT(" + connection.escape(req.body.password) + ", " + connection.escape(process.env.PasswordKey) + "))", function (err, rows, fields) {
                     
                     // Checking if there were any errors with this query
@@ -222,7 +223,9 @@ router.post('/login', function (req, res, next) {
         // If it does, returning the password that was used to create this account. Using the escape() method 
         // of the connection object to add "" around the value of the user submitted data (as requested by the 
         // API of the mysql module). Decrypting the value of the password column. It was encrypted so that even
-        // if the database were to be comprimised, this data would be secured. 
+        // if the database were to be comprimised, this data would be secured. Accessing the encryption keys 
+        // for each column from environment variable I have set up locally and on Azure, so as to ensure that 
+        // the data cannot be comprimised.
         connection.query("SELECT AES_DECRYPT(userPassword, " + connection.escape(process.env.PasswordKey) + ") AS 'userPassword' FROM User WHERE username = " + connection.escape(currentUsername), function (err, rows, fields) {
             
             // Checking if there were any errors with this query

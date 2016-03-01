@@ -23,6 +23,8 @@ router.get('/secrets', function (req, res, next) {
     // one who created any of the secrets in the database. Using the escape() method of the connection object to add
     // "" around the value of the user submitted data (as requested by the API of the mysql module).
     // The password column was encrypted so that even if the database were to be comprimised, this data would be secured.
+    // Accessing the encryption keys for each column from environment variable I have set up locally and on Azure,
+    // so as to ensure that the data cannot be comprimised.
     connection.query("SELECT u.username AS 'username', AES_DECRYPT(s.secretTitle, " + connection.escape(process.env.SecretTitleKey) + ") AS 'secretTitle',  AES_DECRYPT(s.secretDescription, " + connection.escape(process.env.SecretDesKey) + ") AS 'secret', s.secretId AS 'secretId' FROM Secret s JOIN User u ON s.secretUserId = u.userId WHERE u.username = " + connection.escape(req.session.username) + " ORDER BY " + sortBy, function (err, rows, fields) {
         
         // Checking if there were any errors with this query
@@ -88,7 +90,9 @@ router.post('/secrets/addNewSecret', function (req, res, next) {
     // Inserting a new row into the database, to generate a new secret in the Secret table. Using the escape() 
     // method of the connection object to add "" around the value of the user submitted data (as requested by 
     // the API of the mysql module). The secretTitle and secretDescription columns will be encrypted so that
-    // even if the database were to be comprimised, this data would be secured.
+    // even if the database were to be comprimised, this data would be secured. Accessing the encryption keys 
+    // for each column from environment variable I have set up locally and on Azure, so as to ensure that the 
+    // data cannot be comprimised.
     connection.query("INSERT INTO Secret(secretId, secretTitle, secretDescription, secretUserId) VALUES(" + connection.escape(newSecretId) + ", AES_ENCRYPT(" + connection.escape(req.body.secretTitle) + ", " + connection.escape(process.env.SecretTitleKey) + "), AES_ENCRYPT(" + connection.escape(req.body.secret) + ", " + connection.escape(process.env.SecretDesKey) + "), (SELECT userId FROM User WHERE username = " + connection.escape(req.session.username) + "))", function (err, rows, fields) {
         
         // Checking if there were any errors with this query
@@ -111,7 +115,8 @@ router.post('/secrets/updateSecret', function (req, res, next) {
     // Using the escape() method of the connection object to add
     // "" around the value of the user submitted data (as requested by the API of the mysql module).
     // Encrypting the value of the secretDescription column, so that even if the database were to be comprimised,
-    // this data would be secured.
+    // this data would be secured. Accessing the encryption keys for each column from environment variable I 
+    // have set up locally and on Azure, so as to ensure that the data cannot be comprimised.
     connection.query("UPDATE Secret SET secretDescription = AES_ENCRYPT(" + connection.escape(req.body.newSecretText) + ", " + connection.escape(process.env.SecretDesKey) + ") WHERE secretId = " + connection.escape(req.body.secretId), function (err, rows, fields) {
         
         // Checking if there was any error with the query
