@@ -19,7 +19,7 @@ Assignment-01 for the Server Side Programming module, as part of the Creative Mu
     - Storing current sort preference of a user using cookie-parser
 - Database
     - Persisting user login credentials, as well as their own secrets in a remote MySQL Database on Azure
-    - Database was generated from an sql script
+    - Database was generated from an SQL script
     - Managing my database through MySQLWorkbench
     - Running a local version of the database on a WAMP server (for testing purposes)
 - Security
