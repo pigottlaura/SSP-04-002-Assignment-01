@@ -1,5 +1,6 @@
 // Requiring the express module, so that I can use it to generate the router
 var express = require('express');
+
 // Creating a new router object using the Router method of express object
 var router = express.Router();
 
@@ -31,10 +32,11 @@ router.get('/', function (req, res, next) {
     } else {
         
         // Since this session has a username, then the user is already logged in. Redirecting
-        // them back to the secrets page i.e. so they cannot try to login to another account
-        // while they are still logged in, and also so they do not inadvertantly leave themselves
-        // logged in.
-        res.redirect("/users/secrets");
+        // them back to the login page to be verified again, which will then take them to the
+        // user secrets page i.e.  so they cannot try to login to another account while they 
+        // are still logged in, and also so they do not inadvertantly leave themselves logged in,
+        // and so they do not assume they are logged out because they are back on this page.
+        res.redirect("/login");
     }
 });
 
@@ -56,10 +58,11 @@ router.get('/createAccount', function (req, res, next) {
     } else {
         
         // Since this session has a username, then the user is already logged in. Redirecting
-        // them back to the secrets page i.e. so they cannot try to login to another account
-        // while they are still logged in, and also so they do not inadvertantly leave themselves
-        // logged in.
-        res.redirect("/users/secrets");
+        // them back to the login page to be verified again, which will then take them to the
+        // user secrets page i.e.  so they cannot try to login to another account while they 
+        // are still logged in, and also so they do not inadvertantly leave themselves logged in,
+        // and so they do not assume they are logged out because they are back on this page.
+        res.redirect("/login");
     }
 });
 
@@ -80,10 +83,13 @@ router.get('/login', function (req, res, next) {
         res.render('index', {title: "Login", loginWarning: "", createAccountWarning: "" });
     } else {
         
-        // Since this session has a username, then the user is already logged in. Redirecting
-        // them back to the secrets page i.e. so they cannot try to login to another account
-        // while they are still logged in, and also so they do not inadvertantly leave themselves
-        // logged in.
+        // Since this session has a username, then the user is already logged in and has been verified
+        // i.e. they can only get this property added to their session based on a successful post to
+        // /createAccount or /login, where their details would have been checked against the database
+        // to validate their username and password against all current users. Passing them on
+        // to the user secrets page i.e. so they cannot try to login to another account while they 
+        // are still logged in, and also so they do not inadvertantly leave themselves logged in,
+        // and so they do not assume they are logged out because they are back on this page.
         res.redirect("/users/secrets");
     }
 });
@@ -172,7 +178,8 @@ router.post('/createAccount', function (req, res, next) {
                 console.log("Cannot create new user " + req.body.username + ". This username is already taken");
                 
                 // Ensuring the index tab of the homepage is set to the create account tab (as this is where the
-                // user came from)
+                // user came from). This number is used client-side to decide which tab to dispaly: Login
+                // or Create Account. Resetting this to 1, as this is the Create Account tab.
                 res.cookie("indexTab", 1);
                 
                 // Rendering the homepage of the website, with a title of Create account, and a warning to
@@ -188,7 +195,8 @@ router.post('/createAccount', function (req, res, next) {
         // client-side, but just want to ensure that no anomolies occur in the database
         
         // Ensuring the index tab of the homepage is set to the create account tab (as this is where the
-        // user came from)
+        // user came from). this number is used client-side to decide which tab to dispaly: Login
+        // or Create Account. Resetting this to 1, as this is the Create Account tab.
         res.cookie("indexTab", 1);
         
         // Rendering the homepage of the website, with a title of Create account, and a warning to
@@ -211,48 +219,106 @@ router.post('/login', function (req, res, next) {
         var currentUsername = req.session.username != null ? req.session.username : req.body.username;
         
         // Querying the database to confirm that this username does infact belong to a registered user.
-        // If it does, returning the 
+        // If it does, returning the password that was used to create this account. Using the escape() method 
+        // of the connection object to add "" around the value of the user submitted data (as requested by the 
+        // API of the mysql module). Decrypting the value of the password column. It was encrypted so that even
+        // if the database were to be comprimised, this data would be secured. 
         connection.query("SELECT AES_DECRYPT(userPassword, " + connection.escape(process.env.PasswordKey) + ") AS 'userPassword' FROM User WHERE username = " + connection.escape(currentUsername), function (err, rows, fields) {
+            
+            // Checking if there were any errors with this query
             if (err) {
                 console.log("Unable query the database to see if " + currentUsername + " exists " + err);
+                
+                // Ensuring the index tab of the homepage is set to the login tab, so the user can try
+                // to login again. This number is used client-side to decide which tab to dispaly: Login
+                // or Create Account. Resetting this to 0, as this is the Login tab.
                 res.cookie("indexTab", 0);
+                
+                // Rendering the homepage of the website, with a title of Login, and a warning to
+                // display on the login form that there was an unexpected error
                 res.render("index", {title: "Login", loginWarning: "There was an unexpected issue with your login. Please try again.", createAccountWarning: "" });
             } else {
                 console.log("Successfully queried the database to see if " + currentUsername + " exists ");
                 // Checking if any rows were returned from the query (i.e. does the username
                 // exist in our database)
                 if (rows.length > 0) {
-                    // Checking if this request has a username and password property
+                    // Since this query returned more than one row, the username provided
+                    // must belong to a registered user
+                    
+                    // Checking if this request has a username and password property i.e. if this
+                    // was a login request from the home page
                     if (req.body.username != null && req.body.password != null) {
                         // Checking if the password the user entered matched the password we have
                         // stored in the database (no need to check the name, as the query did that
                         // above for us. If the name didn't match, the rows would not have contained
                         // any results)
                         if (req.body.password == rows[0].userPassword) {
+                            // If the password suplied in the login form matches the password stored in
+                            // the database, then this user has successfully logged in and will be redirected
+                            // to the /users/secrets page
                             console.log(req.body.username + " login details match a user in database - Login Authenticated");
+                            
+                            // Setting the session username to be equal to that of the request body username, so 
+                            // that this session will be initialised, and so I can now check if the user is still
+                            // logged in
                             req.session.username = req.body.username;
+                            
+                            // Since the username and password provided successfully match a registered user,
+                            // redirecting them to the user secrets page
                             res.redirect("/users/secrets");
                         } else {
+                            // Although the username provided was correct, the password did not match with the one
+                            // used to create this account
                             console.log("Incorrect password for user " + req.body.username);
+                            
+                            // Resetting the index tab to ensure the login tab is displayed on the home page this 
+                            // number is used client-side to decide which tab to dispaly: Login or Create Account. 
+                            // Resetting this to 0, as this is the Login tab.
                             res.cookie("indexTab", 0);
                             res.render("index", {title: "Login", loginWarning: "Incorrect password for " + req.body.username + ". Please try again.", createAccountWarning: "" });
                         }
-                    }
-                } else if (req.session.username != null) {
-                    console.log(req.body.username + " is already logged in - Login Authenticated");
-                    res.redirect("/users/secrets");
+                    } else if (req.session.username != null) {
+                        // If the session username variable has been set, then this request must have
+                        // been a redirect from another page and so the user is already validated.
+                        console.log(req.body.username + " is already logged in - Login Authenticated");
+                        
+                        // Redirecting the user to the user/secrets page i.e. so their secrets can 
+                        // be queried from the database
+                        res.redirect("/users/secrets");
+                    } 
                 } else {
+                    // Since the query to the database returned no rows, this username is not currently
+                    // in the database
                     console.log(req.body.username + " is not a registered username");
+                    
+                    // Ensuring the index tab of the homepage is set to the login (index 0) tab so they can try
+                    // to login again. This number is used client-side to decide which tab to dispaly: Login
+                    // or Create Account. Resetting this to 0, as this is the Login tab.
                     res.cookie("indexTab", 0);
+                    
+                    // Rendering the homepage of the website, with a title of Login, and a warning to
+                    // display on the login form that the username provided is not a registered
+                    // user
                     res.render("index", {title: "Login", loginWarning: req.body.username + " is not a registered username.", createAccountWarning: "" });
                 }
             }
         });
     } else {
+        // As there is no username provided in the request, and there
         console.log("There is no request username, or session username, to compare to the database");
+        
+        // Resetting the index tab of the homepage to be set to the login tab, so the user can try to login
+        // again. This number is used client-side to decide which tab to dispaly: Login or Create Account. 
+        // Resetting this to 0, as this is the Login tab.
         res.cookie("indexTab", 0);
+        
+        // Rendering the homepage of the website, with a title of Login, and a warning to
+        // display on the login form that an unexpected error has occured
         res.render("index", {title: "Login", loginWarning: "There was an unexpected issue with your login. Please try again.", createAccountWarning: "" });
     }
 });
 
+// Sending the router variable as an export of this module so that I can
+// require and access it in the main app, so it can be specified as a route
+// for a particular path i.e this module will be used for all requests to "/"
 module.exports = router;
