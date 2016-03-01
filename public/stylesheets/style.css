@@ -42,12 +42,13 @@ form {
 form > * {
     display: inline-block;
 }
-form input {
+form input, form textarea {
     width: 60%;
 }
 form label {
     width: 38%;
     margin-bottom: 4%;
+    vertical-align: top;
 }
 form input[type="submit"]{
     float: right;
@@ -77,8 +78,8 @@ select, input[type="submit"], button, input.button {
 .updateSecret {
     margin: 1% 0 3% 0;
 }
-.updateSecret input {
-    width: 99%;
+.updateSecret textarea {
+    width: 98%;
     margin: 3% 0;
 }
 #addNew {
