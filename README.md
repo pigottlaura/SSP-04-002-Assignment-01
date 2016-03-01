@@ -1,6 +1,6 @@
 # SSP-04-002-Assignment-01
 
-Assignment-01 for the Server Side Programming module, as part of the Creative Mulitimedia B.Sc (hons) degree course in Limerick Institute of Technology, Clonmel
+Assignment-01 for the Server Side Programming module, as part of the Creative Mulitimedia B.Sc (hons) degree course in Limerick Institute of Technology, Clonmel.
 **Note - In order to run this application locally, the appropriate environment variables would need to be set, and the mySecrets SQL script would need to be run to generate on a WAMP server (for example)**
 
 - App structure
